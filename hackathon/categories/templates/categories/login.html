@@ -82,7 +82,7 @@
 <body>
     <div class="registration-container">
         <h1>Вход</h1>
-        <form id="registrationForm" action="{% url "succesful_login" %}" method="POST">
+        <form id="registrationForm" action="{% url 'succesful_login' %}" method="POST">
             {% csrf_token %}
             <div class="form-group">
                 <label for="email">Email</label>

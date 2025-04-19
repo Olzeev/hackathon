@@ -5,7 +5,7 @@ from django.shortcuts import render, redirect
 from django.contrib import messages
 from .forms import HelperForm
 from .models import Helper
-
+from django.contrib.auth import authenticate, login
 
 
 from django.shortcuts import render, redirect
@@ -75,7 +75,7 @@ def login(request):
     return render(request, 'categories/login.html')
 def succesful_login(request):
     if request.method == 'POST':
-        login = request.POST.get("login")
+        email = request.POST.get("email")
         password = request.POST.get("password")
 
         # Валидация данных
@@ -83,8 +83,18 @@ def succesful_login(request):
             messages.error(request, "Все поля обязательны для заполнения")
             return redirect('login')
 
-        if User.objects.filter(username=login).exists() and User.objects.filter(username=login).get_password() == password:
+        # Аутентификация пользователя
+        user = authenticate(request, email=email, password=password)
+
+        if user is not None:
+            login(request, user)  # Создаем сессию для пользователя
+            messages.success(request, "Вы успешно вошли в систему")
+            return redirect('logged')  # Перенаправляем на защищенную страницу
+        else:
+            messages.error(request, "Неверное имя пользователя или пароль")
             return redirect('logged')
+
+        # Если метод GET, просто отображаем форму
     return render(request, 'categories/login.html')
 
 def logged(request):
