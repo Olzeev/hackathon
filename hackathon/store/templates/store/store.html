@@ -1,0 +1,53 @@
+{% load static %}
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+    <meta charset="UTF-8">
+    <title>Магазин баллов</title>
+    <link rel="stylesheet" href="{% static 'css/store.css' %}">
+</head>
+<body>
+
+<header>
+    <div class="container" style="display: flex; justify-content: space-between; align-items: center;">
+        <div class="logo">Магазин Баллов</div>
+        <div class="auth-buttons">
+            <a href="#" class="btn">Войти</a>
+            <a href="#" class="btn">Регистрация</a>
+        </div>
+    </div>
+</header>
+
+<section class="hero">
+    <div class="container">
+        <h1>Купи баллы и получи преимущества</h1>
+        <p>Выбирай пакет, пополняй счет и получай доступ к дополнительным возможностям!</p>
+    </div>
+</section>
+
+<section class="experts">
+    <div class="container">
+        <h2>Пакеты баллов</h2>
+        <div class="expert-list">
+            {% for package in packages %}
+            <form method="post" action="{% url 'buy_package' package.id %}" class="expert-card-button">
+                {% csrf_token %}
+                <div class="expert-card">
+                    <h3>{{ package.name }}</h3>
+                    <p>{{ package.description }}</p>
+                    <p><strong>{{ package.points }} баллов</strong></p>
+                    <p>Цена: {{ package.price }} ₽</p>
+                    <button type="submit" class="btn-primary">Купить</button>
+                </div>
+            </form>
+            {% endfor %}
+        </div>
+    </div>
+</section>
+
+<footer>
+    <p>&copy; 2025 Магазин Баллов. Все права защищены.</p>
+</footer>
+
+</body>
+</html>
