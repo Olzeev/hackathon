@@ -30,7 +30,8 @@ console.log(helperId); // Выведет "456" (как строка)
 
 username = ''
 document.getElementById('join-btn').onclick = function () {
-    username = '1'
+    username = document.getElementById('username-input').textContent
+    console.log(username)
 
     var loc = window.location
     var wsStart = 'ws://'
@@ -149,7 +150,7 @@ function createOfferer(peerUsername, receiver_channel_name) {
     dc.addEventListener('message', dcOnMessage);
 
     var remoteVideo = createVideo(peerUsername);
-    setOnTrack(peer, remoteVideo);
+    setOnTrack(peer, peerUsername);
 
     mapPeers[peerUsername] = [peer, dc];    
 
@@ -212,7 +213,7 @@ function createAnswerer(offer, peerUsername, receiver_channel_name) {
 
         if (iceConnectionState === 'failed' || iceConnectionState === 'disconnected' || iceConnectionState === 'closed') {
             delete mapPeers[peerUsername];
-            if (!iceConnectionState != 'closed') {
+            if (iceConnectionState != 'closed') {
                 peer.close();
             }
 
@@ -247,7 +248,7 @@ function createAnswerer(offer, peerUsername, receiver_channel_name) {
         })
 }
 
-function addLocalTracks(jsonStr) {
+function addLocalTracks(peer) {
     localStream.getTracks().forEach(track => {
         peer.addTrack(track, localStream)
     })

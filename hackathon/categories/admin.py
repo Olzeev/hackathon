@@ -1,8 +1,7 @@
 from django.contrib import admin
 
-from categories.models import Helper, Category, CustomUser
+from categories.models import AdditionalInfo, Category
 
 # Register your models here.
-admin.site.register(Helper)
+admin.site.register(AdditionalInfo)
 admin.site.register(Category)
-admin.site.register(CustomUser)

@@ -1,9 +1,8 @@
 from django.db import models
 
 
-class Helper(models.Model):
+class AdditionalInfo(models.Model):
     id = models.AutoField(primary_key=True)
-    name = models.CharField(max_length=255, verbose_name="Name")
     description = models.TextField(max_length=65535, blank=True, null=True, verbose_name="Description")
     rate = models.IntegerField(blank=True, null=True, verbose_name="Rating")
     university = models.CharField(max_length=65535, blank=True, null=True, verbose_name="University")
@@ -31,11 +30,11 @@ class Helper(models.Model):
     )
 
     class Meta:
-        verbose_name = "Helper"
-        verbose_name_plural = "Helpers"
+        verbose_name = "Additional info"
+        verbose_name_plural = "Additional info"
 
     def str(self):
-        return self.name
+        return self.id
 
 
 class Category(models.Model):
@@ -49,16 +48,3 @@ class Category(models.Model):
     def str(self):
         return self.name
 
-
-
-class CustomUser(models.Model):
-    phone = models.CharField(max_length=20, blank=True, verbose_name='Телефон')
-    email = models.CharField(max_length=50, unique=True, verbose_name='Email')
-    password = models.CharField(max_length=20, unique=True, verbose_name='Password')
-    login = models.CharField(max_length=20, unique=True, verbose_name='login')
-    class Meta:
-        verbose_name = 'Пользователь'
-        verbose_name_plural = 'Пользователи'
-
-    def __str__(self):
-        return self.username

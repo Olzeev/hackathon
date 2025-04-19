@@ -64,7 +64,7 @@
         <p>{{ helper.description }}</p>
         <p>Рейтинг: {{ helper.rate }}</p>
 
-        <form method="get" action="{% url 'chat_view' helper.id %}">
+        <form method="get" action="{% url 'redirect_to_chat' helper.id %}">
           <button type="submit" class="btn-start-chat">Начать общение</button>
         </form>
       </div>

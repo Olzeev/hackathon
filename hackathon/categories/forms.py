@@ -1,5 +1,5 @@
 from django import forms
-from .models import Helper, Category
+from .models import AdditionalInfo, Category
 
 
 
@@ -12,5 +12,5 @@ class HelperForm(forms.ModelForm):
     )
 
     class Meta:
-        model = Helper
-        fields = ['name', 'description', 'rate', 'university', 'course', 'rank', 'photo', 'categories']
+        model = AdditionalInfo
+        fields = ['description', 'rate', 'university', 'course', 'rank', 'photo', 'categories']
