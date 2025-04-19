@@ -10,6 +10,19 @@ class Helper(models.Model):
     course = models.IntegerField(blank=True, null=True, verbose_name="Course")
     rank = models.IntegerField(blank=True, null=True, verbose_name="Rank")
 
+    # Profile photo
+    photo = models.ImageField(
+        upload_to='media',
+        blank=True,
+        null=True,
+        verbose_name='Profile Photo'
+    )
+    # Online status
+    is_online = models.BooleanField(
+        default=False,
+        verbose_name='Online Status'
+    )
+
     # Many-to-many relationship with categories from another DB
     categories = models.ManyToManyField(
         'categories.Category',
@@ -21,11 +34,10 @@ class Helper(models.Model):
         verbose_name = "Helper"
         verbose_name_plural = "Helpers"
 
-    def __str__(self):
+    def str(self):
         return self.name
 
 
-# This would be in your categories app/models.py
 class Category(models.Model):
     name = models.CharField(max_length=255, verbose_name="Name")
     description = models.TextField(blank=True, null=True, verbose_name="Description")
@@ -33,7 +45,20 @@ class Category(models.Model):
     class Meta:
         verbose_name = "Category"
         verbose_name_plural = "Categories"
-        # using = 'categories_db'  # Uncomment if using a different database
+
+    def str(self):
+        return self.name
+
+
+
+class CustomUser(models.Model):
+    phone = models.CharField(max_length=20, blank=True, verbose_name='Телефон')
+    email = models.CharField(max_length=50, unique=True, verbose_name='Email')
+    password = models.CharField(max_length=20, unique=True, verbose_name='Password')
+    login = models.CharField(max_length=20, unique=True, verbose_name='login')
+    class Meta:
+        verbose_name = 'Пользователь'
+        verbose_name_plural = 'Пользователи'
 
     def __str__(self):
-        return self.name
+        return self.username
