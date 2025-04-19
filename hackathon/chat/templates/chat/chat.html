@@ -14,16 +14,15 @@
     <div class="main-body">
         <div class="person-header">
             <div>
-                <img src="https://ezochat.com/content/img/avatars/305355_front.jpg" class="ph-avatar">
-                <p class="ph-rating" id="rating">5.00</p>
-                <p class="ph-course" id="course">1 курс магистратуры</p>
+                <img src="{{ helper.photo.url }}" class="ph-avatar">
+                <p class="ph-rating" id="rating">{{ helper.rate }}</p>
+                <p class="ph-course" id="course">{{ helper.course }}</p>
             </div>
             <div style="position: relative; left: 20px;">
-                <h1 class="ph-name">Иван Архаров</h1>
-                <p class="ph-categories">Матанализ, линал</p>
+                <h1 class="ph-name">{{ helper.name }}</h1>
+                <p class="ph-categories">{% for categ in categories %} {{ categ.name }}  {% endfor %}</p>
             </div>
         </div>
-        <input id="username"></input>
         <button onclick="" id="join-btn">Join</button>
         <div class="chat-area">
             <video src="{% static 'chat/video/video.mp4' %}" class="remote-video" id="remote-video" autoplay ></video>

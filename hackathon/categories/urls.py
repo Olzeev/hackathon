@@ -11,5 +11,5 @@ urlpatterns = [
     path('categories_logged', views.logged, name = 'logged'),
     path('', views.categories, name='categories'),
     path('succesful_login', views.succesful_login, name = 'succesful_login'),
-    path('chat/<int:helper_id>/', index, name='chat_view'),
+    path('chat/<int:helper_id>/', views.redirect_to_chat, name='redirect_to_chat'),
 ]

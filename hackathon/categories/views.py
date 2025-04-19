@@ -6,6 +6,7 @@ from django.contrib import messages
 from .forms import HelperForm
 from .models import Helper
 from django.contrib.auth import authenticate, login
+from django.urls import reverse
 
 
 from django.shortcuts import render, redirect
@@ -116,3 +117,6 @@ def become_helper(request):
     else:
         form = HelperForm()
     return render(request, 'categories/become_helper.html', {'form': form})
+
+def redirect_to_chat(request, helper_id):
+    return redirect(reverse('chat:chat-view', kwargs={'user_id': helper_id}))
