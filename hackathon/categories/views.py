@@ -5,7 +5,16 @@ from django.contrib import messages
 from .forms import HelperForm
 from .models import AdditionalInfo, Category
 from django.contrib.auth import authenticate, login
+<<<<<<< HEAD
+from django.core.exceptions import ValidationError
+from django.core.validators import validate_email
+=======
 from django.urls import reverse
+
+>>>>>>> 14ad123269f3b37081c67d9bf81f57b4ffc0e7be
+
+from django.shortcuts import render, redirect
+from .models import Helper, Category
 
 def categories(request):
     all_categories = Category.objects.all()
@@ -26,21 +35,23 @@ def categories(request):
 
 def auth(request):
     return render(request, 'categories/auth.html')
-
-
-
 def register_view(request):
     if request.method == 'POST':
-        login = request.POST.get("login")
+        username = request.POST.get("login")  # <- Изменили 'login' на 'username'
         email = request.POST.get("email")
         password = request.POST.get("password")
 
-        # Валидация данных
-        if not all([login, email, password]):
+        if not all([username, email, password]):
             messages.error(request, "Все поля обязательны для заполнения")
             return redirect('auth')
 
-        if User.objects.filter(username=login).exists():
+        try:
+            validate_email(email)
+        except ValidationError:
+            messages.error(request, "Некорректный email")
+            return redirect('auth')
+
+        if User.objects.filter(username=username).exists():
             messages.error(request, "Пользователь с таким логином уже существует")
             return redirect('auth')
 
@@ -49,56 +60,25 @@ def register_view(request):
             return redirect('auth')
 
         try:
-            # Правильное создание пользователя
             user = User.objects.create_user(
-                username=login,
+                username=username,  # <- Используем новое имя переменной
                 email=email,
                 password=password
             )
-            # Дополнительные поля, если нужно
-            # user.first_name = request.POST.get("first_name", "")
-            # user.save()
-
-            messages.success(request, "Регистрация прошла успешно!")
-            login(request, user)
-            return redirect('logged')
+            auth_user = authenticate(request, username=username, password=password)
+            if auth_user is not None:
+                login(request, auth_user)  # <- Теперь 'login' это функция
+                messages.success(request, "Регистрация прошла успешно!")
+                return redirect('categories')
+            else:
+                messages.error(request, "Ошибка аутентификации")
+                return redirect('auth')
 
         except Exception as e:
-            messages.error(request, f"Ошибка при регистрации: {str(e)}")
+            messages.error(request, f"Ошибка: {str(e)}")
             return redirect('auth')
+
     return render(request, 'categories/login.html')
-
-
-def login(request):
-    return render(request, 'categories/login.html')
-
-
-def succesful_login(request):
-    if request.method == 'POST':
-        email = request.POST.get("email")
-        password = request.POST.get("password")
-
-        # Валидация данных
-        if not all([login, password]):
-            messages.error(request, "Все поля обязательны для заполнения")
-            return redirect('login')
-
-        # Аутентификация пользователя
-        user = authenticate(request, email=email, password=password)
-
-        if user is not None:
-            login(request, user)  # Создаем сессию для пользователя
-            messages.success(request, "Вы успешно вошли в систему")
-            return redirect('logged')  # Перенаправляем на защищенную страницу
-        else:
-            messages.error(request, "Неверное имя пользователя или пароль")
-            return redirect('logged')
-
-        # Если метод GET, просто отображаем форму
-    return render(request, 'categories/login.html')
-
-def logged(request):
-    return render(request, 'categories/categories_logged.html')
 
 def become_helper(request):
     if request.method == 'POST':

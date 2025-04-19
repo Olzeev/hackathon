@@ -1,3 +1,4 @@
+{% load static %}
 <!DOCTYPE html>
 <html lang="ru">
 <head>
@@ -15,7 +16,7 @@
             align-items: center;
             height: 100vh;
         }
-        .registration-container {
+        .login-container {
             background-color: white;
             padding: 30px;
             border-radius: 8px;
@@ -37,7 +38,7 @@
             color: #555;
             font-weight: bold;
         }
-        input[type="email"],
+        input[type="text"],
         input[type="password"] {
             width: 100%;
             padding: 10px;
@@ -46,11 +47,16 @@
             font-size: 16px;
             box-sizing: border-box;
         }
-        input[type="email"]:focus,
+        input[type="text"]:focus,
         input[type="password"]:focus {
             border-color: #007bff;
             outline: none;
             box-shadow: 0 0 0 2px rgba(0, 123, 255, 0.25);
+        }
+        .error-message {
+            color: #dc3545;
+            font-size: 14px;
+            margin-top: 5px;
         }
         .submit-btn {
             width: 100%;
@@ -66,61 +72,75 @@
         .submit-btn:hover {
             background-color: #0056b3;
         }
-        .login-link {
+        .links {
             text-align: center;
             margin-top: 20px;
         }
-        .login-link a {
+        .links a {
             color: #007bff;
             text-decoration: none;
+            margin: 0 10px;
         }
-        .login-link a:hover {
+        .links a:hover {
             text-decoration: underline;
+        }
+        .global-error {
+            color: #dc3545;
+            text-align: center;
+            margin-bottom: 20px;
         }
     </style>
 </head>
 <body>
-    <div class="registration-container">
+    <div class="login-container">
         <h1>Вход</h1>
-        <form id="registrationForm" action="{% url 'succesful_login' %}" method="POST">
+
+        {% if form.errors %}
+        <div class="global-error">
+            Неверное имя пользователя или пароль. Пожалуйста, попробуйте снова.
+        </div>
+        {% endif %}
+
+        {% if next %}
+            {% if user.is_authenticated %}
+            <div class="global-error">
+                У вашей учетной записи нет доступа к этой странице.
+            </div>
+            {% else %}
+            <div class="global-error">
+                Пожалуйста, войдите, чтобы увидеть эту страницу.
+            </div>
+            {% endif %}
+        {% endif %}
+
+        <form method="post" action="{% url 'login' %}">
             {% csrf_token %}
+
             <div class="form-group">
-                <label for="email">Email</label>
-                <input type="email" id="email" name="email" required placeholder="Введите ваш email">
+                <label for="id_username">Имя пользователя</label>
+                {{ form.username }}
+                {% if form.username.errors %}
+                    <div class="error-message">{{ form.username.errors }}</div>
+                {% endif %}
             </div>
+
             <div class="form-group">
-                <label for="password">Пароль</label>
-                <input type="password" id="password" name="password" required placeholder="Введите пароль">
+                <label for="id_password">Пароль</label>
+                {{ form.password }}
+                {% if form.password.errors %}
+                    <div class="error-message">{{ form.password.errors }}</div>
+                {% endif %}
             </div>
+
+            <input type="hidden" name="next" value="{{ next }}" />
+
             <button type="submit" class="submit-btn">Войти</button>
         </form>
-        <div class="login-link">
-            <a href="{%url 'auth'%}">Зарегестрироваться</a>
+
+        <div class="links">
+            <a href="{% url 'auth' %}">Регистрация</a>
+            <a href="{% url 'password_reset' %}">Забыли пароль?</a>
         </div>
     </div>
-
-    <script>
-        document.getElementById('registrationForm').addEventListener('submit', function(e) {
-            e.preventDefault();
-
-            // Здесь можно добавить валидацию формы перед отправкой
-            const email = document.getElementById('email').value;
-            const password = document.getElementById('password').value;
-
-            // Пример валидации
-            if (!email.includes('@')) {
-                alert('Пожалуйста, введите корректный email');
-                return;
-            }
-
-            if (password.length < 6) {
-                alert('Пароль должен содержать минимум 6 символов');
-                return;
-            }
-
-            // Если все ок, отправляем форму
-            this.submit();
-        });
-    </script>
 </body>
 </html>
