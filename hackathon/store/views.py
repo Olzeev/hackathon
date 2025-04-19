@@ -5,11 +5,6 @@ from django.shortcuts import redirect, get_object_or_404
 def store_view(request):
     packages = Package.objects.all()  # если у тебя есть модель, иначе можно просто заглушку
     return render(request, 'store/store.html', {'packages': packages})
-def buy_package(request, package_id):
-    package = get_object_or_404(Package, id=package_id)
-
-    # Здесь можно реализовать покупку, начисление баллов и т.д.
-    # Пока просто редиректим назад
-    print(f"Куплен пакет: {package.name} за {package.price} ₽")
-
-    return redirect('store')  # Название главной страницы магазина
+def package_detail(request, slug):
+    package = get_object_or_404(Package, slug = slug)
+    return render(request, 'store/detail.html', {'package': package})

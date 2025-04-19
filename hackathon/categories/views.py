@@ -5,16 +5,13 @@ from django.contrib import messages
 from .forms import HelperForm
 from .models import AdditionalInfo, Category
 from django.contrib.auth import authenticate, login
-<<<<<<< HEAD
+
 from django.core.exceptions import ValidationError
 from django.core.validators import validate_email
-=======
 from django.urls import reverse
 
->>>>>>> 14ad123269f3b37081c67d9bf81f57b4ffc0e7be
-
 from django.shortcuts import render, redirect
-from .models import Helper, Category
+from .models import Category
 
 def categories(request):
     all_categories = Category.objects.all()

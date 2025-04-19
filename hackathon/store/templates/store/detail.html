@@ -1,0 +1,53 @@
+{% load static %}
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+  <meta charset="UTF-8">
+  <title>{{ package.name }} — Детали</title>
+  <link rel="stylesheet" href="{% static 'css/store.css' %}">
+</head>
+<body>
+
+<header class="site-header">
+  <div class="container header-inner">
+    <div class="logo">🔹 Магазин Баллов</div>
+    <nav class="nav-menu">
+      <a href="{% url 'store:store' %}">Магазин</a>
+      <a href="#">О нас</a>
+      <a href="#">Контакты</a>
+    </nav>
+    <div class="auth-buttons">
+      <a href="#" class="btn">Войти</a>
+    </div>
+  </div>
+</header>
+
+<section class="detail-section">
+  <div class="container detail-card">
+    {% if package.discount %}
+      <div class="badge detail-badge">‑{{ package.discount }}%</div>
+    {% endif %}
+    <h1>{{ package.name }}</h1>
+    <p class="detail-desc">{{ package.description }}</p>
+    <p class="detail-points"><strong>{{ package.points }} баллов</strong></p>
+    <p class="detail-price">
+      {% if package.discount %}
+        <span class="old-price">{{ package.price }} ₽</span>
+      {% endif %}
+      <span class="new-price">{{ package.sell_price }} ₽</span>
+    </p>
+    <div class="detail-buttons">
+      <a href="#" class="btn btn-buy">Добавить в корзину</a>
+      <a href="{% url 'store:store' %}" class="btn btn-secondary">← Вернуться в магазин</a>
+    </div>
+  </div>
+</section>
+
+<footer class="site-footer">
+  <div class="container">
+    <p>© 2025 Магазин Баллов. Все права защищены.</p>
+  </div>
+</footer>
+
+</body>
+</html>

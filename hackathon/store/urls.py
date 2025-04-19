@@ -1,7 +1,7 @@
 from django.urls import path
-from .views import store_view, buy_package
-
+from .views import store_view,package_detail
+app_name = 'store'
 urlpatterns = [
     path('', store_view, name = 'store'),
-    path('buy/<int:package_id>/', buy_package, name='buy_package'),
+    path('<slug:slug>/', package_detail, name = 'package_detail')
 ]
