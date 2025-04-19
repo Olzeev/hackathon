@@ -38,21 +38,12 @@
     <div class="container">
       <h2>Популярные помощники</h2>
       <div class="expert-list">
-        <div class="expert-card">
-          <img src="student1.jpg" alt="Помощник 1">
-          <h3>Анна</h3>
-          <p>Математика</p>
-        </div>
-        <div class="expert-card">
-          <img src="student2.jpg" alt="Помощник 2">
-          <h3>Игорь</h3>
-          <p>Программирование</p>
-        </div>
-        <div class="expert-card">
-          <img src="student3.jpg" alt="Помощник 3">
-          <h3>Елена</h3>
-          <p>Физика</p>
-        </div>
+        {% for helper in helpers %}
+          <div class="expert-card">
+            <h3>{{ helper.name }}</h3>
+            <p>{{ helper.description }}</p>
+          </div>
+        {% endfor %}
       </div>
     </div>
   </section>
