@@ -61,3 +61,10 @@
     height: 500px;
     object-fit: cover;
 }
+
+.local-video{
+    position: absolute;
+    width: 40%;
+    bottom: 0;
+    right: 0;
+}
