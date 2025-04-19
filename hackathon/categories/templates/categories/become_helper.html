@@ -1,0 +1,28 @@
+{% load static %}
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Стать помощником</title>
+  <link rel="stylesheet" href="{% static 'categories/css/categories.css' %}">
+</head>
+<body>
+  <header>
+    <div class="container">
+      <a href="{% url 'categories' %}" class="btn">&larr; Назад</a>
+    </div>
+  </header>
+
+  <section class="helper-registration">
+    <div class="container">
+      <h1>Регистрация помощника</h1>
+      <form method="post" enctype="multipart/form-data">
+        {% csrf_token %}
+        {{ form.as_p }}
+        <button type="submit" class="btn-primary">Зарегистрироваться</button>
+      </form>
+    </div>
+  </section>
+</body>
+</html>
