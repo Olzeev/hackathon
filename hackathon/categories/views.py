@@ -64,6 +64,7 @@ def register_view(request):
             # user.save()
 
             messages.success(request, "Регистрация прошла успешно!")
+            login(request, user)
             return redirect('logged')
 
         except Exception as e:
@@ -71,8 +72,11 @@ def register_view(request):
             return redirect('auth')
     return render(request, 'categories/login.html')
 
+
 def login(request):
     return render(request, 'categories/login.html')
+
+
 def succesful_login(request):
     if request.method == 'POST':
         email = request.POST.get("email")
