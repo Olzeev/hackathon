@@ -1,8 +1,9 @@
 from django.urls import path
 from . import views
-from django.contrib.auth.views import LoginView, LogoutView
+
+app_name = 'chat'
 
 urlpatterns = [
-    path('', views.index, name='main'), 
-    path('getUsername', views.getUsername, name='getUsername')
+    path('chat/getUsername', views.getUsername, name='getUsername'), 
+    path('<int:user_id>/', views.index, name='chat-view')
 ]

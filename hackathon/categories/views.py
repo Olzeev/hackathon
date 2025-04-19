@@ -6,8 +6,13 @@ from django.contrib import messages
 from .forms import HelperForm
 from .models import Helper
 from django.contrib.auth import authenticate, login
+<<<<<<< HEAD
 from django.core.exceptions import ValidationError
 from django.core.validators import validate_email
+=======
+from django.urls import reverse
+
+>>>>>>> 14ad123269f3b37081c67d9bf81f57b4ffc0e7be
 
 from django.shortcuts import render, redirect
 from .models import Helper, Category
@@ -88,3 +93,6 @@ def become_helper(request):
     else:
         form = HelperForm()
     return render(request, 'categories/become_helper.html', {'form': form})
+
+def redirect_to_chat(request, helper_id):
+    return redirect(reverse('chat:chat-view', kwargs={'user_id': helper_id}))

@@ -3,7 +3,7 @@ csrf = document.getElementsByName("csrfmiddlewaretoken")[0].value
 function get_username(callback) {
     $.ajax({
         type: "POST",
-        url: 'getUsername',
+        url: '/chat/getUsername',
         data: {
             "csrfmiddlewaretoken": csrf
         },
@@ -19,10 +19,18 @@ function get_username(callback) {
 
 var mapPeers = {}
 
+function getHelperId() {
+    const path = window.location.pathname; // "/chat/456/"
+    const segments = path.split('/').filter(Boolean); // ["chat", "456"]
+    return segments[1]; 
+}
+
+const helperId = getHelperId();
+console.log(helperId); // Выведет "456" (как строка)
+
 username = ''
 document.getElementById('join-btn').onclick = function () {
-    username = document.getElementById('username').textContent
-
+    username = '1'
 
     var loc = window.location
     var wsStart = 'ws://'
@@ -30,7 +38,7 @@ document.getElementById('join-btn').onclick = function () {
     if (loc.protocol == 'https:') {
         wsStart = 'wss://'
     }
-    var endPoint = wsStart + loc.host + loc.pathname
+    var endPoint = wsStart + loc.host + '/chat/'
     webSocket = new WebSocket(endPoint)
 
 
@@ -47,7 +55,7 @@ document.getElementById('join-btn').onclick = function () {
             "#id_message_send_input"
         ).value;
         get_username(function(username) {
-            webSocket.send(JSON.stringify({ message: messageInput, username : username}));
+            webSocket.send(JSON.stringify({ action: 'new-answer', message: messageInput, username : username}));
         })
         
     };
@@ -66,15 +74,15 @@ document.getElementById('join-btn').onclick = function () {
         }
 
         if (action == 'new-offer') {
-            var offer = parsedData['message']['sdp'];
+            var offer = data['message']['sdp'];
             createAnswerer(offer, peerUsername, receiver_channel_name);
             return;
         }
 
         if (action == 'new-answer') {
-            var answer = parsedData['message']['sdp']
+            var answer = data['message']['sdp']
 
-            var peer = mapPeers[peesrUsername][0];
+            var peer = mapPeers[peerUsername][0];
 
             peer.setRemoteDescription(answer);
             return ;
@@ -185,7 +193,7 @@ function createAnswerer(offer, peerUsername, receiver_channel_name) {
 
 
     var remoteVideo = createVideo(peerUsername);
-    setOnTrack(peer, peerUsername);
+    setOnTrack(peer, remoteVideo);
 
     peer.addEventListener('datachannel', e => {
         peer.dc = e.channel;
@@ -265,6 +273,8 @@ function setOnTrack(peer, remoteVideo) {
     var remoteStream = new MediaStream();
 
     remoteVideo.srcObject = remoteStream
+
+    
 
     peer.addEventListener('track', async (event) => {
         remoteStream.addTrack(event.track, remoteStream);

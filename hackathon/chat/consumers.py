@@ -18,7 +18,7 @@ class ChatConsumer(AsyncWebsocketConsumer):
         text_data_json = json.loads(text_data)
         message = text_data_json["message"]
 
-        action = text_data_json['action']
+        action = text_data_json["action"]
 
         if (action == 'new-offer') or (action == 'new-answer'):
             receiver_channel_name = text_data_json['message']['receiver_channel_name']
