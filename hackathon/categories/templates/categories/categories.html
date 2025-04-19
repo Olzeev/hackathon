@@ -1,0 +1,66 @@
+{% load static %}
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>ЭкспертЧат</title>
+  <link rel="stylesheet" href="{% static 'categories/css/categories.css' %}">
+</head>
+<body>
+  <header>
+    <div class="container">
+      <div class="logo">ЭкспертЧат</div>
+      <nav>
+        <ul class="nav-menu">
+          <li><a href="#">Помощники</a></li>
+          <li><a href="#">Как это работает</a></li>
+          <li><a href="#">Отзывы</a></li>
+          <li><a href="#">Контакты</a></li>
+        </ul>
+      </nav>
+      <div class="auth-buttons">
+        <a href="#" class="btn">Войти</a>
+        <a href="#" class="btn">Регистрация</a>
+      </div>
+    </div>
+  </header>
+
+  <section class="hero">
+    <div class="container">
+      <h1>Онлайн-помощь от студентов — студентам</h1>
+      <p>Получите поддержку по учебе от более опытных студентов в любое время.</p>
+      <a href="#" class="btn-primary">Найти помощника</a>
+    </div>
+  </section>
+
+  <section class="experts">
+    <div class="container">
+      <h2>Популярные помощники</h2>
+      <div class="expert-list">
+        <div class="expert-card">
+          <img src="student1.jpg" alt="Помощник 1">
+          <h3>Анна</h3>
+          <p>Математика</p>
+        </div>
+        <div class="expert-card">
+          <img src="student2.jpg" alt="Помощник 2">
+          <h3>Игорь</h3>
+          <p>Программирование</p>
+        </div>
+        <div class="expert-card">
+          <img src="student3.jpg" alt="Помощник 3">
+          <h3>Елена</h3>
+          <p>Физика</p>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <footer>
+    <div class="container">
+      <p>&copy; 2025 ЭкспертЧат. Все права защищены.</p>
+    </div>
+  </footer>
+</body>
+</html>
