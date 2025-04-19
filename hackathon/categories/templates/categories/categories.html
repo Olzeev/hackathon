@@ -47,27 +47,25 @@
     </div>
   </form>
 
-  <section class="experts">
-    <div class="container">
-      <h2>Помощники</h2>
-      <div class="expert-list">
-        {% for helper in helpers %}
-          <div class="expert-card">
-            {% if helper.photo %}
-              <img src="{{ helper.photo.url }}" alt="{{ helper.name }}">
-            {% else %}
-              <img src="{% static 'categories/img/default-avatar.png' %}" alt="Нет фото">
-            {% endif %}
-            <h3>{{ helper.name }}</h3>
-            <p>{{ helper.description }}</p>
-            <p>Рейтинг: {{ helper.rate }}</p>
-          </div>
-        {% empty %}
-          <p>Нет помощников по выбранным категориям.</p>
-        {% endfor %}
-      </div>
-    </div>
-  </section>
+<div class="expert-list">
+  {% for helper in helpers %}
+    <form method="get" action="{% url 'chat_view' helper.id %}">
+      <button type="submit" class="expert-card-button">
+        <div class="expert-card">
+          {% if helper.photo %}
+            <img src="{{ helper.photo.url }}" alt="{{ helper.name }}">
+          {% else %}
+            <img src="{% static 'categories/img/default-avatar.png' %}" alt="Нет фото">
+          {% endif %}
+          <h3>{{ helper.name }}</h3>
+          <p>{{ helper.description }}</p>
+          <p>Рейтинг: {{ helper.rate }}</p>
+        </div>
+      </button>
+    </form>
+  {% endfor %}
+</div>
+
 
   <footer>
     <div class="container">
