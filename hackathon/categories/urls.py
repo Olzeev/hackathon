@@ -9,4 +9,6 @@ urlpatterns = [
     path('register_view', views.register_view, name = "register_view"),
     path('chat/<int:helper_id>/', index, name='chat_view'),
     path('accounts/', include('django.contrib.auth.urls')),
+    path('profile/', views.profile, name = 'profile'),
+    path('change_profile/', views.change_profile, name = 'change_profile'),
 ]

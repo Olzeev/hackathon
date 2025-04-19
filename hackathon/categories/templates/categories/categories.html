@@ -1,4 +1,12 @@
 {% load static %}
+   <!-- перед вашим {% load static %} или сразу после него -->
+   <link
+     rel="stylesheet"
+     href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css"
+     integrity="sha512-pE6zjKQYuyN2pBu1FhKNHPgxQkso5gDkBHp1VoS2ml5eF1IkL+fgVkoA9u1XnL1rYB1DfT2fOarG+uVb22QK0g=="
+     crossorigin="anonymous"
+     referrerpolicy="no-referrer"
+   />
 <!DOCTYPE html>
 <html lang="ru">
 <head>
@@ -6,6 +14,23 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>ЭкспертЧат</title>
   <link rel="stylesheet" href="{% static 'categories/css/categories.css' %}">
+  <style>
+  header .container {
+    position: relative;
+  }
+  .user-icon {
+    position: absolute;
+    top: 12px;
+    right: 12px;
+  }
+  .profile-photo-preview {
+    width: 36px;
+    height: 36px;
+    border-radius: 50%;
+    object-fit: cover;
+    display: block;
+  }
+</style>
 </head>
 <body>
   <header>
@@ -23,7 +48,8 @@
 
       <!-- Иконка пользователя -->
           <div class="user-icon">
-            <i class="fas fa-user"></i>
+            <a href="{% url 'profile'%}"><img id="photo-preview" src="{% if user_data.photo %}{{ user_data.photo.url }}{% else %}{% static 'categories/img/default-avatar.png' %}{% endif %}"
+            alt="Фото профиля" class="profile-photo-preview"></a>
           </div>
           <form action="{% url 'logout' %}" method="post" class="logout-form">
             {% csrf_token %}
@@ -68,30 +94,6 @@
     </div>
   </form>
 
-<div class="expert-list">
-    {% for helper in helpers %}
-      <div class="expert-card">
-        <div class="photo-wrapper">
-          {% if helper.photo %}
-            <img src="{{ helper.photo.url }}" alt="{{ helper.name }}">
-          {% else %}
-            <img src="{% static 'categories/img/default-avatar.png' %}" alt="Нет фото">
-          {% endif %}
-          {% if helper.is_online %}
-            <span class="online-dot"></span>
-          {% endif %}
-        </div>
-        <h3>{{ helper.name }}</h3>
-        <p>{{ helper.description }}</p>
-        <p>Рейтинг: {{ helper.rate }}</p>
-
-        <form method="get" action="{% url 'redirect_to_chat' helper.id %}">
-          <button type="submit" class="btn-start-chat">Начать общение</button>
-        </form>
-      </div>
-    {% endfor %}
-  </div>
-
 
   <footer>
     <div class="container">
@@ -117,7 +119,6 @@
 </html>
 
   <style>
-    /* Если вы не хотите править внешний CSS — можно временно добавить сюда */
     .expert-card {
       position: relative;
       padding: 16px;
@@ -167,4 +168,26 @@
     .btn-start-chat:hover {
       background-color: #218838;
     }
+    /* чтобы позиционировать иконку относительно header */
+header .container {
+  position: relative;
+}
+
+/* обёртка картинки профиля */
+.user-icon {
+  position: absolute;
+  top: 12px;    /* отступ сверху */
+  right: 12px;  /* отступ справа */
+}
+
+/* сама картинка */
+.profile-photo-preview {
+  width: 36px;          /* размер по ширине */
+  height: 36px;         /* размер по высоте */
+  border-radius: 50%;   /* круглая */
+  object-fit: cover;    /* обрезает по рамке без искажений */
+  display: block;
+}
+
+
   </style>

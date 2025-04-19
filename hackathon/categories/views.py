@@ -11,8 +11,7 @@ from django.core.validators import validate_email
 from django.urls import reverse
 
 from django.shortcuts import render, redirect
-from .models import Category
-
+from .models import Category, AdditionalInfo
 def categories(request):
     all_categories = Category.objects.all()
     selected_cats = request.GET.getlist('categories')
@@ -23,11 +22,14 @@ def categories(request):
         helpers = helpers.filter(categories__id__in=selected_cats).distinct()
 
     helpers = helpers.order_by('-rate')
-
+    user_data = [None]
+    if request.user.is_authenticated:
+        user_data = AdditionalInfo.objects.get_or_create(user_id = request.user.id)
     return render(request, 'categories/categories.html', {
         'helpers': helpers,
         'all_categories': all_categories,
         'selected_cats': list(map(int, selected_cats)) if selected_cats else [],
+        'user_data' : user_data[0]
     })
 
 def auth(request):
@@ -92,3 +94,25 @@ def become_helper(request):
 
 def redirect_to_chat(request, helper_id):
     return redirect(reverse('chat:chat-view', kwargs={'user_id': helper_id}))
+def profile(request):
+    user_id = request.user.id
+    user_data = AdditionalInfo.objects.get_or_create(user_id = user_id)
+    return render(request, 'categories/profile.html', {'user_data': user_data[0]})
+def change_profile(request):
+    if request.method == 'POST':
+        photo = request.POST.get("photo")
+        description = request.POST.get("description")
+        university = request.POST.get("university")
+        course = request.POST.get("course")
+    try:
+        user_data = AdditionalInfo.objects.filter(user_id = request.user.id).update(course = course,
+                                                                                    university = university,
+                                                                                    description = description,
+                                                                                    photo = photo)
+        return redirect('profile')
+
+    except Exception as e:
+        messages.error(request, f"Ошибка: {str(e)}")
+        print(f"Ошибка: {str(e)}")
+        return redirect('profile')
+    return redirect(request, 'categories/profile.html')

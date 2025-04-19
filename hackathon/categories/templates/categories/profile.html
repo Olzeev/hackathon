@@ -1,0 +1,206 @@
+{% load static %}
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Редактирование профиля | ЭкспертЧат</title>
+  <link rel="stylesheet" href="{% static 'categories/css/categories.css' %}">
+  <style>
+    .edit-profile-container {
+      max-width: 800px;
+      margin: 40px auto;
+      padding: 30px;
+      background: white;
+      border-radius: 10px;
+      box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+    }
+
+    .edit-profile-header {
+      text-align: center;
+      margin-bottom: 30px;
+    }
+
+    .profile-photo-upload {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      margin-bottom: 20px;
+    }
+
+    .profile-photo-preview {
+      width: 150px;
+      height: 150px;
+      border-radius: 50%;
+      object-fit: cover;
+      margin-bottom: 15px;
+      border: 3px solid #6c63ff;
+    }
+
+    .form-group {
+      margin-bottom: 20px;
+    }
+
+    .form-group label {
+      display: block;
+      margin-bottom: 8px;
+      font-weight: 600;
+      color: #555;
+    }
+
+    .form-control {
+      width: 100%;
+      padding: 10px 15px;
+      border: 1px solid #ddd;
+      border-radius: 5px;
+      font-size: 16px;
+    }
+
+    textarea.form-control {
+      min-height: 100px;
+      resize: vertical;
+    }
+
+    .select-categories {
+      width: 100%;
+      padding: 10px;
+      border: 1px solid #ddd;
+      border-radius: 5px;
+    }
+
+    .btn-save {
+      background: #6c63ff;
+      color: white;
+      border: none;
+      padding: 12px 25px;
+      border-radius: 5px;
+      cursor: pointer;
+      font-size: 16px;
+      transition: background 0.3s;
+      width: 100%;
+    }
+
+    .btn-save:hover {
+      background: #5a52d3;
+    }
+
+    .categories-checkboxes {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 10px;
+      margin-top: 10px;
+    }
+
+    .category-checkbox {
+      display: none;
+    }
+
+    .category-label {
+      background: #f0f0f0;
+      padding: 8px 15px;
+      border-radius: 20px;
+      font-size: 14px;
+      cursor: pointer;
+      transition: all 0.3s;
+    }
+
+    .category-checkbox:checked + .category-label {
+      background: #6c63ff;
+      color: white;
+    }
+  </style>
+</head>
+<body>
+  <header>
+    <div class="container">
+      <nav>
+        <ul class="nav-menu">
+          <li><a href="#">Помощники</a></li>
+          <li><a href="#">Как это работает</a></li>
+          <li><a href="#">Отзывы</a></li>
+          <li><a href="#">Контакты</a></li>
+        </ul>
+      </nav>
+
+      <div class="user-icon">
+        <i class="fas fa-user"></i>
+      </div>
+      <form action="{% url 'logout' %}" method="post" class="logout-form">
+        {% csrf_token %}
+        <button type="submit" class="auth-btn">Выйти</button>
+      </form>
+    </div>
+  </header>
+
+  <div class="edit-profile-container">
+    <div class="edit-profile-header">
+      <h1>Редактирование профиля эксперта</h1>
+    </div>
+
+    <form method="post" enctype="multipart/form-data" action="{% url 'change_profile'%}">
+      {% csrf_token %}
+
+      <div class="profile-photo-upload">
+        <img id="photo-preview" src="{% if user_data.photo %}{{ user_data.photo.url }}{% else %}{% static 'categories/img/default-avatar.png' %}{% endif %}"
+             alt="Фото профиля" class="profile-photo-preview">
+        <input type="file" id="photo-upload" name="photo" accept="image/*" style="display: none;">
+        <button type="button" onclick="document.getElementById('photo-upload').click()" class="btn-save" style="width: auto; margin-top: 10px;">
+          Изменить фото
+        </button>
+      </div>
+
+      <div class="form-group">
+        <label for="description">О себе</label>
+        <textarea id="description" name="description" class="form-control"
+                  placeholder="{{user_data.description}}">{{ user_data.description }}</textarea>
+      </div>
+
+      <div class="form-group">
+        <label for="university">Университет</label>
+        <input type="text" id="university" name="university" class="form-control"
+               value="{{ user_data.university }}" placeholder="{{user_data.university}}">
+      </div>
+
+      <div class="form-group">
+        <label for="course">Курс</label>
+         <input type="text" id="course" name="course" class="form-control"
+               value="{{ user_data.course }}" placeholder="{{ user_data.course }}">
+      </div>
+
+
+      <div class="form-group">
+        <label for="phone">Телефон</label>
+        <input type="tel" id="phone" name="phone" class="form-control"
+               value="{{ user_data.phone }}" placeholder="+7 (XXX) XXX-XX-XX">
+      </div>
+
+      <button type="submit" class="btn-save">Сохранить изменения</button>
+    </form>
+  </div>
+
+  <footer>
+    <div class="container">
+      <p>&copy; 2025 ЭкспертЧат. Все права защищены.</p>
+    </div>
+  </footer>
+
+  <script>
+    // Превью загружаемого фото
+    document.getElementById('photo-upload').addEventListener('change', function(e) {
+      if (e.target.files && e.target.files[0]) {
+        const reader = new FileReader();
+        reader.onload = function(event) {
+          document.getElementById('photo-preview').src = event.target.result;
+        };
+        reader.readAsDataURL(e.target.files[0]);
+      }
+    });
+
+    // Маска для телефона
+    document.getElementById('phone').addEventListener('input', function(e) {
+      let x = e.target.value.replace(/\D/g, '').match(/(\d{0,1})(\d{0,3})(\d{0,3})(\d{0,2})(\d{0,2})/);
+      e.target.value = '+7' + (x[2] ? ' (' + x[2] : '') + (x[3] ? ') ' + x[3] : '') + (x[4] ? '-' + x[4] : '') + (x[5] ? '-' + x[5] : '');
+    });
+  </script>
+</body>
+</html>

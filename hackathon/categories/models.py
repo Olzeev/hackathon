@@ -1,14 +1,17 @@
+from email.policy import default
+
 from django.db import models
 
 
 class AdditionalInfo(models.Model):
     id = models.AutoField(primary_key=True)
-    description = models.TextField(max_length=65535, blank=True, null=True, verbose_name="Description")
-    rate = models.IntegerField(blank=True, null=True, verbose_name="Rating")
-    university = models.CharField(max_length=65535, blank=True, null=True, verbose_name="University")
-    course = models.IntegerField(blank=True, null=True, verbose_name="Course")
-    rank = models.IntegerField(blank=True, null=True, verbose_name="Rank")
-
+    user_id = models.IntegerField(default = 0)
+    description = models.TextField(max_length=65535, blank=True, null=True, verbose_name="Description", default="Ваше описание")
+    rate = models.IntegerField(blank=True, null=True, verbose_name="Rating", default = 5)
+    university = models.CharField(max_length=65535, blank=True, null=True, verbose_name="Название университета", default = "")
+    course = models.IntegerField(blank=True, null=True, verbose_name="Course", default=1)
+    rank = models.IntegerField(blank=True, null=True, verbose_name="Rank", default=1)
+    is_mentor = models.BooleanField(default = False)
     # Profile photo
     photo = models.ImageField(
         upload_to='media',
