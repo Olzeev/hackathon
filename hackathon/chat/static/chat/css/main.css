@@ -1,0 +1,70 @@
+.main-body{
+    width: 90vw;
+    border: 2px solid red;
+    position: relative;
+    left: 5vw;
+    padding: 20px;
+    font-family:'Gill Sans', 'Gill Sans MT', Calibri, 'Trebuchet MS', sans-serif;
+}
+
+.person-header{
+    width: 100%;
+    display: flex;
+}
+
+.ph-avatar{
+    aspect-ratio: 1;
+    height: 100px;
+    border-radius: 50%;
+    object-fit: cover;
+}
+
+.ph-rating{
+    width: 100px;
+    font-size: 17pt;
+    text-align: center;
+    position: relative;
+    bottom: 10px;
+}
+
+.ph-course{
+    width: 100px;
+    font-size: 12pt;
+    text-align: center;
+    position: relative;
+    bottom: 30px;
+}
+
+.ph-name{
+    font-size: 20pt;
+}
+
+.ph-categories{
+    position: relative;
+    bottom: 10px;
+}
+
+.chat-area{
+    display: flex;
+    position: relative;
+}
+
+.textchat{
+    border: 2px solid red;
+    position: relative;
+    left: 5%;
+    width: 35%;
+}
+
+.remote-video{
+    width: 60%;
+    height: 500px;
+    object-fit: cover;
+}
+
+.local-video{
+    position: absolute;
+    width: 40%;
+    bottom: 0;
+    right: 0;
+}
