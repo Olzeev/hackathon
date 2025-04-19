@@ -33,48 +33,68 @@
       <a href="#" class="btn-primary">Найти помощника</a>
     </div>
   </section>
-  <form method="get" class="category-filter">
-  <h3>Фильтр по категориям:</h3>
-  {% for category in all_categories %}
-    <label>
-      <input
-        type="checkbox"
-        name="categories"
-        value="{{ category.id }}"
-        {% if category.id in selected_cats %}checked{% endif %}
-      >
-      {{ category.name }}
-    </label>
-  {% endfor %}
-  <button type="submit">Показать</button>
-</form>
 
-<section class="experts">
-  <div class="container">
-    <h2>Помощники</h2>
-    <div class="expert-list">
-      {% for helper in helpers %}
-        <div class="expert-card">
-          {% if helper.photo %}
-            <img src="{{ helper.photo.url }}" alt="{{ helper.name }}">
-          {% else %}
-            <img src="{% static 'categories/img/default-avatar.png' %}" alt="Нет фото">
-          {% endif %}
-          <h3>{{ helper.name }}</h3>
-          <p>{{ helper.description }}</p>
-          <p>Рейтинг: {{ helper.rate }}</p>
-        </div>
-      {% empty %}
-        <p>Нет помощников по выбранным категориям.</p>
-      {% endfor %}
+  <form method="get" class="category-filter-wrapper">
+    <div class="dropdown-filter">
+      <button type="button" class="dropdown-btn" onclick="toggleDropdown()">Фильтр по категориям ⬇</button>
+      <div id="categoryDropdown" class="dropdown-content">
+        {% for category in all_categories %}
+          <label>
+            <input
+              type="checkbox"
+              name="categories"
+              value="{{ category.id }}"
+              {% if category.id in selected_cats %}checked{% endif %}
+            >
+            {{ category.name }}
+          </label>
+        {% endfor %}
+        <button type="submit" class="apply-btn">Показать</button>
+      </div>
     </div>
-  </div>
-</section>
+  </form>
+
+  <section class="experts">
+    <div class="container">
+      <h2>Помощники</h2>
+      <div class="expert-list">
+        {% for helper in helpers %}
+          <div class="expert-card">
+            {% if helper.photo %}
+              <img src="{{ helper.photo.url }}" alt="{{ helper.name }}">
+            {% else %}
+              <img src="{% static 'categories/img/default-avatar.png' %}" alt="Нет фото">
+            {% endif %}
+            <h3>{{ helper.name }}</h3>
+            <p>{{ helper.description }}</p>
+            <p>Рейтинг: {{ helper.rate }}</p>
+          </div>
+        {% empty %}
+          <p>Нет помощников по выбранным категориям.</p>
+        {% endfor %}
+      </div>
+    </div>
+  </section>
 
   <footer>
     <div class="container">
       <p>&copy; 2025 ЭкспертЧат. Все права защищены.</p>
     </div>
   </footer>
+
+  <script>
+    function toggleDropdown() {
+      const dropdown = document.getElementById("categoryDropdown");
+      dropdown.style.display = dropdown.style.display === "block" ? "none" : "block";
+    }
+
+    document.addEventListener('click', function (e) {
+      const btn = document.querySelector('.dropdown-btn');
+      const dropdown = document.getElementById("categoryDropdown");
+      if (!btn.contains(e.target) && !dropdown.contains(e.target)) {
+        dropdown.style.display = 'none';
+      }
+    });
+  </script>
 </body>
 </html>
