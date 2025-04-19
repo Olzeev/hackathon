@@ -29,9 +29,7 @@
             <video src="{% static 'chat/video/video.mp4' %}" class="remote-video" id="remote-video" autoplay ></video>
             <video class="local-video" id="local-video" autoplay ></video>
             <div class="textchat">
-                {% if request.user.is_authenticated  %}
-                <center> Logout the chat Page <a href = "{% url 'logout' %}">Logout</a></center>
-                {% endif %}
+
                 <div
                 class="chat__item__container"
                 id="id_chat_item_container"
