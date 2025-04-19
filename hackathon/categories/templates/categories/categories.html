@@ -48,23 +48,28 @@
   </form>
 
 <div class="expert-list">
-  {% for helper in helpers %}
-    <form method="get" action="{% url 'chat_view' helper.id %}">
-      <button type="submit" class="expert-card-button">
-        <div class="expert-card">
+    {% for helper in helpers %}
+      <div class="expert-card">
+        <div class="photo-wrapper">
           {% if helper.photo %}
             <img src="{{ helper.photo.url }}" alt="{{ helper.name }}">
           {% else %}
             <img src="{% static 'categories/img/default-avatar.png' %}" alt="Нет фото">
           {% endif %}
-          <h3>{{ helper.name }}</h3>
-          <p>{{ helper.description }}</p>
-          <p>Рейтинг: {{ helper.rate }}</p>
+          {% if helper.is_online %}
+            <span class="online-dot"></span>
+          {% endif %}
         </div>
-      </button>
-    </form>
-  {% endfor %}
-</div>
+        <h3>{{ helper.name }}</h3>
+        <p>{{ helper.description }}</p>
+        <p>Рейтинг: {{ helper.rate }}</p>
+
+        <form method="get" action="{% url 'chat_view' helper.id %}">
+          <button type="submit" class="btn-start-chat">Начать общение</button>
+        </form>
+      </div>
+    {% endfor %}
+  </div>
 
 
   <footer>
@@ -89,3 +94,56 @@
   </script>
 </body>
 </html>
+
+  <style>
+    /* Если вы не хотите править внешний CSS — можно временно добавить сюда */
+    .expert-card {
+      position: relative;
+      padding: 16px;
+      border: 1px solid #e0e0e0;
+      border-radius: 8px;
+      background: #fff;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      text-align: center;
+    }
+    .expert-card .photo-wrapper {
+      position: relative;
+      width: 100px;
+      height: 100px;
+      margin-bottom: 12px;
+    }
+    .expert-card .photo-wrapper img {
+      width: 100%;
+      height: 100%;
+      object-fit: cover;
+      border-radius: 50%;
+    }
+    /* Зелёная точка в углу */
+    .expert-card .online-dot {
+      position: absolute;
+      top: 4px;
+      right: 4px;
+      width: 20px;
+      height: 20px;
+      background-color: #28a745;
+      border: 2px solid #fff;
+      border-radius: 50%;
+    }
+    /* Кнопка «Начать общение» */
+    .btn-start-chat {
+      margin-top: 12px;
+      padding: 8px 16px;
+      background-color: #28a745;
+      color: #fff;
+      border: none;
+      border-radius: 4px;
+      cursor: pointer;
+      font-size: 14px;
+      text-decoration: none;
+    }
+    .btn-start-chat:hover {
+      background-color: #218838;
+    }
+  </style>
