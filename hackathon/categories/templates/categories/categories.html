@@ -11,18 +11,11 @@
   <header>
     <div class="container">
       <div class="logo">ЭкспертЧат</div>
-      <nav>
-        <ul class="nav-menu">
-          <li><a href="#">Помощники</a></li>
-          <li><a href="#">Как это работает</a></li>
-          <li><a href="#">Отзывы</a></li>
-          <li><a href="#">Контакты</a></li>
-        </ul>
-      </nav>
-      <div class="auth-buttons">
-        <a href="{% url 'login' %}" class="btn">Войти</a>
-        <a href="{% url 'auth' %}" class="btn">Регистрация</a>
-      </div>
+        <div class="auth-buttons">
+          <a href="{% url 'login' %}" class="auth-btn">Войти</a>
+          <a href="{% url 'auth' %}" class="auth-btn outlined">Регистрация</a>
+        </div>
+
     </div>
   </header>
 
