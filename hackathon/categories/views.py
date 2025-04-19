@@ -1,15 +1,12 @@
 from django.shortcuts import render
-<<<<<<< HEAD
-
 from .models import Helper
 from django.contrib.auth.models import User
 from django.shortcuts import render, redirect
 from django.contrib import messages
-=======
 from .forms import HelperForm
-from categories.models import Helper
+from .models import Helper
 
->>>>>>> 4282456b74cbe8d243875a319a8b4d976ee046a8
+
 
 from django.shortcuts import render, redirect
 from .models import Helper, Category
@@ -34,7 +31,7 @@ def categories(request):
 def auth(request):
     return render(request, 'categories/auth.html')
 
-<<<<<<< HEAD
+
 
 def register_view(request):
     if request.method == 'POST':
@@ -72,11 +69,22 @@ def register_view(request):
         except Exception as e:
             messages.error(request, f"Ошибка при регистрации: {str(e)}")
             return redirect('auth')
-
     return render(request, 'categories/login.html')
-=======
->>>>>>> 4282456b74cbe8d243875a319a8b4d976ee046a8
+
 def login(request):
+    return render(request, 'categories/login.html')
+def succesful_login(request):
+    if request.method == 'POST':
+        login = request.POST.get("login")
+        password = request.POST.get("password")
+
+        # Валидация данных
+        if not all([login, password]):
+            messages.error(request, "Все поля обязательны для заполнения")
+            return redirect('login')
+
+        if User.objects.filter(username=login).exists() and User.objects.filter(username=login).get_password() == password:
+            return redirect('logged')
     return render(request, 'categories/login.html')
 
 def logged(request):
