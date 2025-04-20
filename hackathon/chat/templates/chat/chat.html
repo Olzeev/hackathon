@@ -25,18 +25,19 @@
         </div>
         <!--<button onclick="" id="join-btn">Join</button>-->
         <div class="chat-area">
-            <video class="remote-video" autoplay="true"id="callVideo"></video>
+            <video class="remote-video" autoplay="true"id="callVideo" src="{% static 'chat/video/filler.mp4' %}" autoplay></video>
             <!--<video class="local-video" id="local-video" autoplay ></video>-->
             <div class="textchat">
 
                 
-                <ul id="chat-log">
+                <ul id="chat-log" class="chat-log">
 
                 </ul>
-
-                <input id="messageInput" type="text" class="form-control" placeholder="message">
-                <button type="button" class="btn btn-primary" onclick='sendMessage()'>SEND</button>
-            </div>
+                <div style="position: relative; display: flex; height: 15%;">
+                  <input id="messageInput" type="text" class="message-input" placeholder="Сообщение...">
+                  <button type="button" class="btn btn-primary" onclick='sendMessage()'>SEND</button>
+                </div>
+              </div>
         </div>
         <div class="container">
           
