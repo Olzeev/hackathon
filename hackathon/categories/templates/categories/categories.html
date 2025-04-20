@@ -179,8 +179,35 @@
         {% endfor %}
         <button type="submit" class="apply-btn">Показать</button>
       </div>
-
     </div>
+    <section class="experts">
+      <div class="container">
+        <h2>Доступные помощники</h2>
+        <div class="expert-list">
+          {% for helper in helpers %}
+            <div class="expert-card">
+              <div class="photo-wrapper">
+                <img src="{% if helper.photo %}{{ helper.photo.url }}{% else %}{% static 'categories/img/default-avatar.png' %}{% endif %}"
+                     alt="Фото помощника">
+                {% if helper.is_online %}
+                  <span class="online-dot"></span>
+                {% endif %}
+              </div>
+              {# Если у вас есть связь с User-моделью, можно вывести его имя: #}
+              {# <h3>{{ helper.user.username }}</h3> #}
+              {# А пока просто выведем user_id или любое другое поле: #}
+              <h3>ID: {{ helper.user_id }}</h3>
+              <p>{{ helper.description }}</p>
+              <p>Рейтинг: {{ helper.rate }}</p>
+              <a href="{% url 'chat_view' helper.id %}" class="btn-start-chat">Начать чат</a>
+            </div>
+          {% empty %}
+            <p>По выбранным фильтрам ничего не найдено.</p>
+          {% endfor %}
+        </div>
+      </div>
+    </section>
+
   </form>
 
   <footer>
