@@ -80,18 +80,31 @@ def register_view(request):
     return render(request, 'categories/login.html')
 
 def become_helper(request):
-    if request.method == 'POST':
-        form = HelperForm(request.POST, request.FILES)
-        if form.is_valid():
-            helper = form.save(commit=False)
-            helper.is_online = False  # по умолчанию офлайн
-            helper.save()
-            form.save_m2m()  # сохранить категории
-            return redirect('categories')
-    else:
-        form = HelperForm()
-    return render(request, 'categories/become_helper.html', {'form': form})
+        # Только для авторизованных
+    if not request.user.is_authenticated:
+        return redirect('auth')
 
+    # Берём или создаём запись профиля
+    user_data, _ = AdditionalInfo.objects.get_or_create(user_id=request.user.id)
+
+    # Дефолтные значения из модели
+    default_desc   = AdditionalInfo._meta.get_field('description').default
+    default_univ   = AdditionalInfo._meta.get_field('university').default
+    default_course = AdditionalInfo._meta.get_field('course').default
+
+    # Если хоть одно поле не заполнено (равно дефолту) — кидаем обратно на редактирование профиля
+    if (user_data.description == default_desc
+        or user_data.university  == default_univ
+        or user_data.course      == default_course):
+        messages.warning(request, "Пожалуйста, сначала заполните ваш профиль.")
+        return redirect('profile')
+
+    # Всё OK — поднимаем флаг помощника
+    user_data.is_mentor = True  # или .is_helper, если в вашей модели так называется поле
+    user_data.save(update_fields=['is_mentor'])
+
+    messages.success(request, "Поздравляем! Вы стали помощником.")
+    return redirect('categories')
 def redirect_to_chat(request, helper_id):
     return redirect(reverse('chat:chat-view', kwargs={'user_id': helper_id}))
 def profile(request):
