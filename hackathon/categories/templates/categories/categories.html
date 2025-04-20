@@ -105,12 +105,30 @@
     .btn-start-chat:hover {
       background-color: #218838;
     }
+    .nav-menu {
+      display: flex;
+      list-style: none;
+      margin: 0;
+      padding: 0;
+      gap: 20px;
+    }
+
+    .nav-menu a {
+      text-decoration: none;
+      color: #333;
+      font-weight: 500;
+    }
+
+    .nav-menu a:hover {
+      color: #6c63ff;
+    }
   </style>
 </head>
 <body>
   <header>
     <div class="container">
-      <div class="logo">ЭкспертЧат</div>
+      <nav ><ul class="nav-menu"><a href="{% url 'categories'%}" style="color: white"><h2>ЭкспертЧат</h2></a></ul></nav>
+
 
       {% if user.is_authenticated %}
         <nav>

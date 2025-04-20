@@ -12,7 +12,7 @@ class AdditionalInfo(models.Model):
     course = models.IntegerField(blank=True, null=True, verbose_name="Course", default=1)
     rank = models.IntegerField(blank=True, null=True, verbose_name="Rank", default=1)
     is_mentor = models.BooleanField(default = False)
-    phone = models.CharField(max_length = 15, default = "+7 (XXX) XXX-XX-XX")
+    phone = models.CharField(max_length = 20, default = "+7 (XXX) XXX-XX-XX")
 
     balance = models.PositiveIntegerField(
         default = 0,
