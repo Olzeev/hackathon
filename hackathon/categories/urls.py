@@ -11,6 +11,7 @@ urlpatterns = [
     path('accounts/', include('django.contrib.auth.urls')),
     path('profile/', views.profile, name = 'profile'),
     path('change_profile/', views.change_profile, name = 'change_profile'),
+    path('become_helper', views.become_helper, name='become_helper')
 ]
 if settings.DEBUG:
     urlpatterns += static(settings.MEDIA_URL, document_root=settings.MEDIA_ROOT)

@@ -133,7 +133,7 @@
       {% if user.is_authenticated %}
         <nav>
           <ul class="nav-menu">
-              <li><a href="#">Помощники</a></li>
+              <li><a href="{% url 'become_helper' %}">Стать помощником</a></li>
               <li><a href="#">Как это работает</a></li>
               <li><a href="#">Отзывы</a></li>
               <li><a href="#">Контакты</a></li>
@@ -151,7 +151,7 @@
             <img id="photo-preview" src="{% if user_data.photo %}{{ user_data.photo.url }}{% else %}{% static 'categories/img/default-avatar.png' %}{% endif %}"
                  alt="Фото профиля" class="profile-photo-preview">
           </a>
-
+          
           <form action="{% url 'logout' %}" method="post" class="logout-form">
             {% csrf_token %}
             <button type="submit" class="logout-btn">
@@ -171,6 +171,7 @@
   </header>
 
   <!-- Остальное содержимое страницы -->
+
   <section class="hero">
     <div class="container">
       <h1>Онлайн-помощь от студентов — студентам</h1>
@@ -197,6 +198,34 @@
         <button type="submit" class="apply-btn">Показать</button>
       </div>
     </div>
+    <section class="experts">
+      <div class="container">
+        <h2>Доступные помощники</h2>
+        <div class="expert-list">
+          {% for helper in helpers %}
+            <div class="expert-card">
+              <div class="photo-wrapper">
+                <img src="{% if helper.photo %}{{ helper.photo.url }}{% else %}{% static 'categories/img/default-avatar.png' %}{% endif %}"
+                     alt="Фото помощника">
+                {% if helper.is_online %}
+                  <span class="online-dot"></span>
+                {% endif %}
+              </div>
+              {# Если у вас есть связь с User-моделью, можно вывести его имя: #}
+              {# <h3>{{ helper.user.username }}</h3> #}
+              {# А пока просто выведем user_id или любое другое поле: #}
+              <h3>ID: {{ helper.user_id }}</h3>
+              <p>{{ helper.description }}</p>
+              <p>Рейтинг: {{ helper.rate }}</p>
+              <a href="{% url 'chat_view' helper.id %}" class="btn-start-chat">Начать чат</a>
+            </div>
+          {% empty %}
+            <p>По выбранным фильтрам ничего не найдено.</p>
+          {% endfor %}
+        </div>
+      </div>
+    </section>
+
   </form>
 
   <footer>
