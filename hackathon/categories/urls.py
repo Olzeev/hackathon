@@ -7,13 +7,12 @@ urlpatterns = [
     path('', views.categories, name='categories'),
     path('auth/', views.auth, name = 'auth'),
     path('register_view', views.register_view, name = "register_view"),
-    path('chat/<int:helper_id>/', views.redirect_to_chat, name='redirect_to_chat'),
     path('accounts/', include('django.contrib.auth.urls')),
     path('profile/', views.profile, name = 'profile'),
     path('change_profile/', views.change_profile, name = 'change_profile'),
     path('become_helper', views.become_helper, name='become_helper'),
-    path('start_stream', views.start_stream, name = 'start_stream'),
-    path('start_stream', views.start_stream, name = 'stop_stream'),
+    path('chat/<int:helper_id>/', views.redirect_to_chat, name='redirect_to_chat'),
+    path('stop_stream', views.stop_stream, name = 'stop_stream'),
     ]
 if settings.DEBUG:
     urlpatterns += static(settings.MEDIA_URL, document_root=settings.MEDIA_ROOT)
