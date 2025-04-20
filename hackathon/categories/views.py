@@ -10,8 +10,11 @@ from django.core.exceptions import ValidationError
 from django.core.validators import validate_email
 from django.urls import reverse
 
+>>>>>>> 14ad123269f3b37081c67d9bf81f57b4ffc0e7be
+
 from django.shortcuts import render, redirect
-from .models import Category, AdditionalInfo
+from .models import Helper, Category
+
 def categories(request):
     all_categories = Category.objects.all()
     selected_cats = request.GET.getlist('categories')
@@ -26,14 +29,17 @@ def categories(request):
     if request.user.is_authenticated:
         user_data = AdditionalInfo.objects.get_or_create(user_id = request.user.id)
     return render(request, 'categories/categories.html', {
-        'helpers': helpers,
+        'helpers': User.objects.all(),
         'all_categories': all_categories,
         'selected_cats': list(map(int, selected_cats)) if selected_cats else [],
         'user_data' : user_data[0]
     })
 
+
 def auth(request):
     return render(request, 'categories/auth.html')
+
+
 def register_view(request):
     if request.method == 'POST':
         username = request.POST.get("login")  # <- Изменили 'login' на 'username'
@@ -79,31 +85,20 @@ def register_view(request):
 
     return render(request, 'categories/login.html')
 
+
 def become_helper(request):
-        # Только для авторизованных
-    if not request.user.is_authenticated:
-        return redirect('auth')
+    if request.method == 'POST':
+        form = HelperForm(request.POST, request.FILES)
+        if form.is_valid():
+            helper = form.save(commit=False)
+            helper.is_online = False  # по умолчанию офлайн
+            helper.save()
+            form.save_m2m()  # сохранить категории
+            return redirect('categories')
+    else:
+        form = HelperForm()
+    return render(request, 'categories/become_helper.html', {'form': form})
 
-    # Берём или создаём запись профиля
-    user_data, _ = AdditionalInfo.objects.get_or_create(user_id=request.user.id)
-
-    # Дефолтные значения из модели
-    default_desc   = AdditionalInfo._meta.get_field('description').default
-    default_univ   = AdditionalInfo._meta.get_field('university').default
-    default_course = AdditionalInfo._meta.get_field('course').default
-    # Если хоть одно поле не заполнено (равно дефолту) — кидаем обратно на редактирование профиля
-    if (user_data.description == default_desc
-        or user_data.university  == default_univ
-    ):
-        messages.warning(request, "Пожалуйста, сначала заполните ваш профиль.")
-        return redirect('profile')
-
-    # Всё OK — поднимаем флаг помощника
-    user_data.is_mentor = True  # или .is_helper, если в вашей модели так называется поле
-    user_data.save(update_fields=['is_mentor'])
-
-    messages.success(request, "Поздравляем! Вы стали помощником.")
-    return redirect('categories')
 def redirect_to_chat(request, helper_id):
     return redirect(reverse('chat:chat-view', kwargs={'user_id': helper_id}))
 def profile(request):
