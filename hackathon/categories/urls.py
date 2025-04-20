@@ -2,7 +2,7 @@ from django.urls import path, include
 from . import views
 from django.conf import settings
 from chat.views import index
-
+from django.conf.urls.static import static
 urlpatterns = [
     path('', views.categories, name='categories'),
     path('auth/', views.auth, name = 'auth'),
@@ -12,3 +12,5 @@ urlpatterns = [
     path('profile/', views.profile, name = 'profile'),
     path('change_profile/', views.change_profile, name = 'change_profile'),
 ]
+if settings.DEBUG:
+    urlpatterns += static(settings.MEDIA_URL, document_root=settings.MEDIA_ROOT)

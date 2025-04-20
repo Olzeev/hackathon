@@ -99,20 +99,32 @@ def profile(request):
     user_data = AdditionalInfo.objects.get_or_create(user_id = user_id)
     return render(request, 'categories/profile.html', {'user_data': user_data[0]})
 def change_profile(request):
-    if request.method == 'POST':
-        photo = request.POST.get("photo")
-        description = request.POST.get("description")
-        university = request.POST.get("university")
-        course = request.POST.get("course")
-    try:
-        user_data = AdditionalInfo.objects.filter(user_id = request.user.id).update(course = course,
-                                                                                    university = university,
-                                                                                    description = description,
-                                                                                    photo = photo)
+    if request.method != 'POST' or not request.user.is_authenticated:
         return redirect('profile')
 
-    except Exception as e:
-        messages.error(request, f"Ошибка: {str(e)}")
-        print(f"Ошибка: {str(e)}")
-        return redirect('profile')
-    return redirect(request, 'categories/profile.html')
+    # Читаем форму
+    description = request.POST.get('description', '').strip()
+    university  = request.POST.get('university', '').strip()
+    course      = request.POST.get('course', '').strip()
+    photo_file  = request.FILES.get('photo')
+
+    # Берём или создаём запись
+    user_data, _ = AdditionalInfo.objects.get_or_create(user_id=request.user.id)
+
+    # Обновляем обычные поля
+    user_data.description = description
+    user_data.university  = university
+    if course:
+        user_data.course = course
+
+    # Если пришёл новый файл — удаляем старый (если он был) и сохраняем новый
+    if photo_file:
+        # удалит файл из MEDIA_ROOT, но не затронет статический дефолт
+        if user_data.photo:
+            user_data.photo.delete(save=False)
+        user_data.photo = photo_file
+
+    # Финальное сохранение
+    user_data.save()
+    messages.success(request, "Профиль успешно обновлён")
+    return redirect('profile')
