@@ -1,6 +1,5 @@
 let userInput = document.querySelector('#username')
 let connectButton = document.querySelector('#connectButton')
-let divMsg = document.querySelector('#div_message')
 let btnCreateChat = document.querySelector('#btnCreateChat')
 let chatLog = document.querySelector('#chat-log')
 let acceptDiv = document.querySelector('#acceptDiv')
@@ -108,7 +107,9 @@ function initialize(username) {
 
     dataChannel.onmessage = function (event) {
         console.log("message:", event.data)
-        chatLog.value += (event.data + '\n')
+        msg = document.createElement('li')
+        msg.textContent = event.data
+        chatLog.appendChild(msg)
     }
 
     dataChannel.onclose = function () {
@@ -139,7 +140,6 @@ function createOffer() {
         alert("Error creating an offer");
     })
 
-    divMsg.style.display = 'block'
     btnCreateChat.style.display = 'none'
     acceptDiv.style.display = 'block'
 }
@@ -179,7 +179,6 @@ function handleOffer(offer) {
                 data: answer
             })
 
-            divMsg.style.display = 'block'
             btnCreateChat.style.display = 'none'
             acceptDiv.style.display = 'block'
         })
@@ -219,9 +218,11 @@ function handleAnswer(answer) {
 
 function sendMessage() {
     dataChannel.send(input.value)
+
+    msg = document.createElement('li')
+    msg.textContent = input.value
+    chatLog.appendChild(msg)
     console.log("message:", input.value)
-    chatLog.value += (input.value + '\n')
-    input.value = ""
 }
 
 

@@ -23,34 +23,22 @@
                 <p class="ph-categories">{% for categ in categories %} {{ categ.name }}  {% endfor %}</p>
             </div>
         </div>
-        <input id="username-input">
         <!--<button onclick="" id="join-btn">Join</button>-->
         <div class="chat-area">
-            <div class="remote-video" id="remote-video" autoplay ></div>
+            <video class="remote-video" autoplay="true"id="callVideo"></video>
             <!--<video class="local-video" id="local-video" autoplay ></video>-->
             <div class="textchat">
 
-                <div
-                class="chat__item__container"
-                id="id_chat_item_container"
-                style="font-size: 20px">
-
-                <br />
-
-                <input type="text" id="id_message_send_input" />
-                <button type="submit" id="id_message_send_button">Send Message</button>
-                <br />
-                <br />
-                </div>
                 
+                <ul id="chat-log">
 
+                </ul>
 
-                
-               
+                <input id="messageInput" type="text" class="form-control" placeholder="message">
+                <button type="button" class="btn btn-primary" onclick='sendMessage()'>SEND</button>
             </div>
         </div>
         <div class="container">
-            <h1>Django video chat</h1>
           
             <!--WebRTC related code-->
             <input type="text" id="username" class="form-control" placeholder="Your name"/>
@@ -61,12 +49,6 @@
               Create chat
             </button>
           
-            <div id="div_message">
-              <textarea class="form-control" id="chat-log" cols="100" rows="10"></textarea>
-              <input id="messageInput" type="text" class="form-control" placeholder="message">
-              <button type="button" class="btn btn-primary" onclick='sendMessage()'>SEND</button>
-            </div>
-          
             <div class="raw">
               <div class="col-lg-6">
                 <p>You: </p>
@@ -75,9 +57,7 @@
               <div class="col-lg-6">
                 <div id="acceptDiv">
                   <p>Caller: </p>
-                  <video autoplay="true" width="200" id="callVideo"></video>
-                  {#    <button id="acceptButton">Accept</button>#}
-                  {#    <button id="declineButton">Decline</button>#}
+                  
                 </div>
               </div>
               <div class="col-lg-12">
@@ -86,7 +66,6 @@
             </div>
           
           </div>
-          <div class="footer">Django School 2021</div>
           
 
 <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
