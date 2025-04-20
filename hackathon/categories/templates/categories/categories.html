@@ -133,7 +133,19 @@
       {% if user.is_authenticated %}
         <nav>
           <ul class="nav-menu">
+              {%if user_data.is_mentor%}
+              {%if user_data.is_online%}
+              <li><a href="{% url 'become_helper' %}">Завершить трансляцию</a></li>
+              {%else%}
+              <li><a href="{% url 'become_helper' %}">Начать трансляцию</a></li>
+              {%endif%}
+              {%else%}
               <li><a href="{% url 'become_helper' %}">Стать помощником</a></li>
+              {%endif%}
+              
+              
+              
+              
               <li><a href="#">Как это работает</a></li>
               <li><a href="#">Отзывы</a></li>
               <li><a href="#">Контакты</a></li>

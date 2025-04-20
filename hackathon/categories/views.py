@@ -142,3 +142,10 @@ def change_profile(request):
     user_data.save()
     messages.success(request, "Профиль успешно обновлён")
     return redirect('categories')
+
+
+def start_steam(request):
+    return redirect('categories')
+
+def stop_stream(request):
+    return redirect('categories')
