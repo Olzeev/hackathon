@@ -1,71 +1,152 @@
 {% load static %}
-   <!-- перед вашим {% load static %} или сразу после него -->
-   <link
-     rel="stylesheet"
-     href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css"
-     integrity="sha512-pE6zjKQYuyN2pBu1FhKNHPgxQkso5gDkBHp1VoS2ml5eF1IkL+fgVkoA9u1XnL1rYB1DfT2fOarG+uVb22QK0g=="
-     crossorigin="anonymous"
-     referrerpolicy="no-referrer"
-   />
 <!DOCTYPE html>
 <html lang="ru">
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>ЭкспертЧат</title>
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
   <link rel="stylesheet" href="{% static 'categories/css/categories.css' %}">
   <style>
-  header .container {
-    position: relative;
-  }
-  .user-icon {
-    position: absolute;
-    top: 12px;
-    right: 12px;
-  }
-  .profile-photo-preview {
-    width: 36px;
-    height: 36px;
-    border-radius: 50%;
-    object-fit: cover;
-    display: block;
-  }
-</style>
+    header .container {
+      position: relative;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+    }
+
+    .user-controls {
+      display: flex;
+      align-items: center;
+      gap: 15px;
+    }
+
+    .profile-photo-preview {
+      width: 36px;
+      height: 36px;
+      border-radius: 50%;
+      object-fit: cover;
+      display: block;
+    }
+
+    .logout-btn {
+      background: none;
+      border: none;
+      color: #333;
+      cursor: pointer;
+      font-size: 16px;
+      display: flex;
+      align-items: center;
+      gap: 5px;
+      padding: 5px 10px;
+      border-radius: 4px;
+      transition: background 0.2s;
+    }
+
+    .logout-btn:hover {
+      background: #f0f0f0;
+    }
+
+    .nav-menu {
+      display: flex;
+      gap: 20px;
+    }
+
+    /* Остальные ваши стили */
+    .expert-card {
+      position: relative;
+      padding: 16px;
+      border: 1px solid #e0e0e0;
+      border-radius: 8px;
+      background: #fff;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      text-align: center;
+    }
+
+    .expert-card .photo-wrapper {
+      position: relative;
+      width: 100px;
+      height: 100px;
+      margin-bottom: 12px;
+    }
+
+    .expert-card .photo-wrapper img {
+      width: 100%;
+      height: 100%;
+      object-fit: cover;
+      border-radius: 50%;
+    }
+
+    .expert-card .online-dot {
+      position: absolute;
+      top: 4px;
+      right: 4px;
+      width: 20px;
+      height: 20px;
+      background-color: #28a745;
+      border: 2px solid #fff;
+      border-radius: 50%;
+    }
+
+    .btn-start-chat {
+      margin-top: 12px;
+      padding: 8px 16px;
+      background-color: #28a745;
+      color: #fff;
+      border: none;
+      border-radius: 4px;
+      cursor: pointer;
+      font-size: 14px;
+      text-decoration: none;
+    }
+
+    .btn-start-chat:hover {
+      background-color: #218838;
+    }
+  </style>
 </head>
 <body>
   <header>
     <div class="container">
       <div class="logo">ЭкспертЧат</div>
-          {% if user.is_authenticated %}
-            <nav>
-              <ul class="nav-menu">
-                <li><a href="#">Помощники</a></li>
-                <li><a href="#">Как это работает</a></li>
-                <li><a href="#">Отзывы</a></li>
-                <li><a href="#">Контакты</a></li>
-              </ul>
-            </nav>
 
-      <!-- Иконка пользователя -->
-          <div class="user-icon">
-            <a href="{% url 'profile'%}"><img id="photo-preview" src="{% if user_data.photo %}{{ user_data.photo.url }}{% else %}{% static 'categories/img/default-avatar.png' %}{% endif %}"
-            alt="Фото профиля" class="profile-photo-preview"></a>
-          </div>
+      {% if user.is_authenticated %}
+        <nav>
+          <ul class="nav-menu">
+            <li><a href="#">Помощники</a></li>
+            <li><a href="#">Как это работает</a></li>
+            <li><a href="#">Отзывы</a></li>
+            <li><a href="#">Контакты</a></li>
+          </ul>
+        </nav>
+
+        <div class="user-controls">
+          <a href="{% url 'profile'%}" class="user-icon">
+            <img id="photo-preview" src="{% if user_data.photo %}{{ user_data.photo.url }}{% else %}{% static 'categories/img/default-avatar.png' %}{% endif %}"
+                 alt="Фото профиля" class="profile-photo-preview">
+          </a>
+
           <form action="{% url 'logout' %}" method="post" class="logout-form">
             {% csrf_token %}
-            <button type="submit" class="auth-btn">Выйти</button>
+            <button type="submit" class="logout-btn">
+              <i class="fas fa-sign-out-alt"></i>
+              <span>Выйти</span>
+            </button>
           </form>
+        </div>
 
-        {% else %}
+      {% else %}
         <div class="auth-buttons">
           <a href="{% url 'login' %}" class="auth-btn">Войти</a>
           <a href="{% url 'auth' %}" class="auth-btn outlined">Регистрация</a>
         </div>
-        {% endif %}
-
+      {% endif %}
     </div>
   </header>
 
+  <!-- Остальное содержимое страницы -->
   <section class="hero">
     <div class="container">
       <h1>Онлайн-помощь от студентов — студентам</h1>
@@ -94,7 +175,6 @@
     </div>
   </form>
 
-
   <footer>
     <div class="container">
       <p>&copy; 2025 ЭкспертЧат. Все права защищены.</p>
@@ -117,77 +197,3 @@
   </script>
 </body>
 </html>
-
-  <style>
-    .expert-card {
-      position: relative;
-      padding: 16px;
-      border: 1px solid #e0e0e0;
-      border-radius: 8px;
-      background: #fff;
-      display: flex;
-      flex-direction: column;
-      align-items: center;
-      text-align: center;
-    }
-    .expert-card .photo-wrapper {
-      position: relative;
-      width: 100px;
-      height: 100px;
-      margin-bottom: 12px;
-    }
-    .expert-card .photo-wrapper img {
-      width: 100%;
-      height: 100%;
-      object-fit: cover;
-      border-radius: 50%;
-    }
-    /* Зелёная точка в углу */
-    .expert-card .online-dot {
-      position: absolute;
-      top: 4px;
-      right: 4px;
-      width: 20px;
-      height: 20px;
-      background-color: #28a745;
-      border: 2px solid #fff;
-      border-radius: 50%;
-    }
-    /* Кнопка «Начать общение» */
-    .btn-start-chat {
-      margin-top: 12px;
-      padding: 8px 16px;
-      background-color: #28a745;
-      color: #fff;
-      border: none;
-      border-radius: 4px;
-      cursor: pointer;
-      font-size: 14px;
-      text-decoration: none;
-    }
-    .btn-start-chat:hover {
-      background-color: #218838;
-    }
-    /* чтобы позиционировать иконку относительно header */
-header .container {
-  position: relative;
-}
-
-/* обёртка картинки профиля */
-.user-icon {
-  position: absolute;
-  top: 12px;    /* отступ сверху */
-  right: 12px;  /* отступ справа */
-}
-
-/* сама картинка */
-.profile-photo-preview {
-  width: 36px;          /* размер по ширине */
-  height: 36px;         /* размер по высоте */
-  border-radius: 50%;   /* круглая */
-  object-fit: cover;    /* обрезает по рамке без искажений */
-  display: block;
-}
-
-
-  </style>
