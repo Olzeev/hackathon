@@ -91,11 +91,10 @@ def become_helper(request):
     default_desc   = AdditionalInfo._meta.get_field('description').default
     default_univ   = AdditionalInfo._meta.get_field('university').default
     default_course = AdditionalInfo._meta.get_field('course').default
-
     # Если хоть одно поле не заполнено (равно дефолту) — кидаем обратно на редактирование профиля
     if (user_data.description == default_desc
         or user_data.university  == default_univ
-        or user_data.course      == default_course):
+    ):
         messages.warning(request, "Пожалуйста, сначала заполните ваш профиль.")
         return redirect('profile')
 
