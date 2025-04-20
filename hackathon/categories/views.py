@@ -144,7 +144,7 @@ def change_profile(request):
     return redirect('categories')
 
 
-def start_steam(request):
+def start_stream(request):
     return redirect('categories')
 
 def stop_stream(request):
