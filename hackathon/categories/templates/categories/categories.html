@@ -115,12 +115,18 @@
       {% if user.is_authenticated %}
         <nav>
           <ul class="nav-menu">
-            <li><a href="{% url 'become_helper' %}">Стать помощником</a></li>
-            <li><a href="#">Как это работает</a></li>
-            <li><a href="#">Отзывы</a></li>
-            <li><a href="#">Контакты</a></li>
-          </ul>
-        </nav>
+              <li><a href="{% url 'become_helper' %}">Стать помощником</a></li>
+              <li><a href="#">Как это работает</a></li>
+              <li><a href="#">Отзывы</a></li>
+              <li><a href="#">Контакты</a></li>
+              <!-- Новый пункт: переход в Магазин -->
+              <li>
+                <a href="{% url 'store:store' %}">
+                  Магазин
+                </a>
+              </li>
+            </ul>
+          </nav>
 
         <div class="user-controls">
           <a href="{% url 'profile'%}" class="user-icon">
@@ -147,6 +153,7 @@
   </header>
 
   <!-- Остальное содержимое страницы -->
+
   <section class="hero">
     <div class="container">
       <h1>Онлайн-помощь от студентов — студентам</h1>
@@ -172,6 +179,7 @@
         {% endfor %}
         <button type="submit" class="apply-btn">Показать</button>
       </div>
+
     </div>
   </form>
 
