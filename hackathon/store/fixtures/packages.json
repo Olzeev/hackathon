@@ -1,0 +1,38 @@
+[
+  {
+    "model": "store.package",
+    "pk": 2,
+    "fields": {
+      "name": "250 баллов",
+      "slug": "250-ballov",
+      "description": "Пакет из 250 баллов",
+      "points": 250,
+      "price": "260.00",
+      "discount": "0.00"
+    }
+  },
+  {
+    "model": "store.package",
+    "pk": 3,
+    "fields": {
+      "name": "500 баллов",
+      "slug": "500-ballov",
+      "description": "Пакет из 500 баллов",
+      "points": 500,
+      "price": "520.00",
+      "discount": "0.00"
+    }
+  },
+  {
+    "model": "store.package",
+    "pk": 4,
+    "fields": {
+      "name": "1000 баллов",
+      "slug": "1000-ballov",
+      "description": "Пакет из 1000 баллов со скидкой 20%",
+      "points": 1000,
+      "price": "1050.00",
+      "discount": "20.00"
+    }
+  }
+]

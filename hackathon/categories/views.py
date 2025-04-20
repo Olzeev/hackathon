@@ -10,9 +10,16 @@ from django.core.exceptions import ValidationError
 from django.core.validators import validate_email
 from django.urls import reverse
 
+<<<<<<< HEAD
+
+
+from django.shortcuts import render, redirect
+from .models import Category
+=======
 
 from django.shortcuts import render, redirect
 from .models import  Category
+>>>>>>> 72a51844620ea1d8e8684fdc464304310ce70b33
 
 def categories(request):
     all_categories = Category.objects.all()
