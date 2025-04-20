@@ -23,7 +23,8 @@ class AdditionalInfo(models.Model):
         upload_to='media',
         blank=True,
         null=True,
-        verbose_name='Profile Photo'
+        verbose_name='Profile Photo', 
+        default='media/default/default-avatar.png'
     )
     # Online status
     is_online = models.BooleanField(

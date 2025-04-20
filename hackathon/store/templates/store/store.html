@@ -10,6 +10,7 @@
 
 <header class="site-header">
   <div class="container header-inner">
+    <a href="{% url 'categories' %}" class="btn outlined">ЭксперЧат</a>
     <div class="logo">🔹 Магазин Баллов</div>
     <div class="auth-buttons">
       {% if user.is_authenticated %}

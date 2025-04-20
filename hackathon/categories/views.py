@@ -110,12 +110,17 @@ def become_helper(request):
     messages.success(request, "Поздравляем! Вы стали помощником.")
     return redirect('categories')
 
+
 def redirect_to_chat(request, helper_id):
     return redirect(reverse('chat:chat-view', kwargs={'user_id': helper_id}))
+
+
 def profile(request):
     user_id = request.user.id
     user_data = AdditionalInfo.objects.get_or_create(user_id = user_id)
     return render(request, 'categories/profile.html', {'user_data': user_data[0]})
+
+
 def change_profile(request):
     if request.method != 'POST' or not request.user.is_authenticated:
         return redirect('profile')
@@ -138,11 +143,8 @@ def change_profile(request):
     if phone:
         user_data.phone = phone
     # Если пришёл новый файл — удаляем старый (если он был) и сохраняем новый
-    if photo_file:
-        # удалит файл из MEDIA_ROOT, но не затронет статический дефолт
-        if user_data.photo:
-            user_data.photo.delete(save=False)
-        user_data.photo = photo_file
+    
+    user_data.photo = photo_file
 
     # Финальное сохранение
     user_data.save()

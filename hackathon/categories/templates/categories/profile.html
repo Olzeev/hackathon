@@ -251,7 +251,7 @@
       {% csrf_token %}
 
       <div class="profile-photo-upload">
-        <img id="photo-preview" src="{% if user_data.photo %}{{ user_data.photo.url }}{% else %}{% static 'categories/img/default-avatar.png' %}{% endif %}"
+        <img id="photo-preview" src="{{ user_data.photo.url }}"
              alt="Фото профиля" class="profile-photo-large">
         {% if user_data.is_online %}
           <span class="online-dot"></span>
