@@ -12,6 +12,11 @@ class AdditionalInfo(models.Model):
     course = models.IntegerField(blank=True, null=True, verbose_name="Course", default=1)
     rank = models.IntegerField(blank=True, null=True, verbose_name="Rank", default=1)
     is_mentor = models.BooleanField(default = False)
+
+    balance = models.PositiveIntegerField(
+        default = 0,
+        verbose_name='Balance'
+    )
     # Profile photo
     photo = models.ImageField(
         upload_to='media',

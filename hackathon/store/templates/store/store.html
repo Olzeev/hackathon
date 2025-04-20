@@ -11,14 +11,13 @@
 <header class="site-header">
   <div class="container header-inner">
     <div class="logo">🔹 Магазин Баллов</div>
-    <nav class="nav-menu">
-      <a href="#">Главная</a>
-      <a href="#">О нас</a>
-      <a href="#">Контакты</a>
-    </nav>
     <div class="auth-buttons">
-      <a href="#" class="btn">Войти</a>
-      <a href="#" class="btn outlined">Регистрация</a>
+      {% if user.is_authenticated %}
+        <span class="balance">Баланс: {{ balance }} баллов</span>
+      {% else %}
+        <a href="{% url 'login' %}?next={{ request.path }}" class="btn primary">Войти</a>
+        <a href="{% url 'auth' %}" class="btn outlined">Регистрация</a>
+      {% endif %}
     </div>
   </div>
 </header>
@@ -71,4 +70,26 @@
 </footer>
 
 </body>
+{% if messages %}
+  <div class="container" style="margin-top:20px;">
+    {% for message in messages %}
+      <div class="alert alert-{{ message.tags }}">
+        {{ message }}
+      </div>
+    {% endfor %}
+  </div>
+{% endif %}
+<script>
+  document.addEventListener('DOMContentLoaded', function() {
+    // Находим все .alert и ставим отложенное скрытие
+    document.querySelectorAll('.alert').forEach(function(alert){
+      // Через 3 секунды добавляем класс .hidden
+      setTimeout(function(){
+        alert.classList.add('hidden');
+        // Удаляем из DOM после окончания transition (0.5s)
+        setTimeout(function(){ alert.remove(); }, 500);
+      }, 3000);
+    });
+  });
+</script>
 </html>

@@ -17,7 +17,12 @@
       <a href="#">Контакты</a>
     </nav>
     <div class="auth-buttons">
-      <a href="#" class="btn">Войти</a>
+      {% if user.is_authenticated %}
+        <span class="balance">Баланс: {{ balance }} баллов</span>
+      {% else %}
+        <a href="{% url 'login' %}?next={{ request.path }}" class="btn primary">Войти</a>
+        <a href="{% url 'auth' %}" class="btn outlined">Регистрация</a>
+      {% endif %}
     </div>
   </div>
 </header>
@@ -37,7 +42,16 @@
       <span class="new-price">{{ package.sell_price }} ₽</span>
     </p>
     <div class="detail-buttons">
-      <a href="#" class="btn btn-buy">Добавить в корзину</a>
+      {% if user.is_authenticated %}
+        <form method="post" action="{% url 'store:buy_package' package.slug %}">
+          {% csrf_token %}
+          <button class="btn btn-buy">Купить</button>
+        </form>
+      {% else %}
+        <a href="{% url 'login' %}?next={{ request.path }}" class="btn btn-buy">
+          Войти, чтобы купить
+        </a>
+      {% endif %}
       <a href="{% url 'store:store' %}" class="btn btn-secondary">← Вернуться в магазин</a>
     </div>
   </div>

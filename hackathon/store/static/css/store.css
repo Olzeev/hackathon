@@ -33,7 +33,7 @@ body {
 /* ========== Хедер ========== */
 .site-header {
   background: #fff;
-  box-shadow: 0 2px 8px rgba(0,0,0,0.05);
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.05);
 }
 .header-inner {
   display: flex;
@@ -64,16 +64,22 @@ body {
   display: flex;
   gap: 12px;
 }
+
+/* ========== Основная кнопка (.btn) ========== */
 .btn {
+  display: inline-block;
   text-decoration: none;
   padding: 8px 20px;
   border-radius: var(--radius);
   font-weight: 500;
-  transition: background var(--transition), color var(--transition), border var(--transition);
+  line-height: 1.5;
+  transition: background var(--transition), color var(--transition), border var(--transition), opacity var(--transition);
 }
 .btn:hover {
   opacity: 0.9;
 }
+
+/* outlined */
 .btn.outlined {
   background: transparent;
   border: 2px solid var(--primary);
@@ -84,7 +90,50 @@ body {
   color: #fff;
 }
 
-/* ========== Герой ========== */
+/* primary */
+.btn.primary {
+  background: var(--primary);
+  color: #fff;
+}
+.btn.primary:hover {
+  background: var(--primary-dark);
+}
+
+/* ========== Специальные кнопки ========== */
+/* Купить */
+.btn-buy {
+  background: var(--accent);
+  color: #fff;
+  padding: 10px 20px;
+  font-weight: 600;
+}
+.btn-buy:hover {
+  background: #1e8e4a;
+}
+
+/* Вернуться */
+.btn-secondary {
+  background: transparent;
+  border: 2px solid var(--muted);
+  color: var(--muted);
+  padding: 10px 20px;
+}
+.btn-secondary:hover {
+  background: var(--muted);
+  color: #fff;
+}
+
+/* ========== Баланс в шапке ========== */
+.balance {
+  display: inline-block;
+  padding: 8px 20px;
+  background: var(--accent);
+  color: #fff;
+  border-radius: var(--radius);
+  font-weight: 500;
+}
+
+/* ========== Hero ========== */
 .hero {
   background: linear-gradient(135deg, var(--primary), var(--primary-dark));
   color: #fff;
@@ -102,7 +151,7 @@ body {
   opacity: 0.85;
 }
 
-/* ========== Раздел пакетов ========== */
+/* ========== Пакеты ========== */
 .packages-section {
   padding: 60px 0;
 }
@@ -122,28 +171,24 @@ body {
   margin: 12px auto 0;
   border-radius: 2px;
 }
-
-/* Сетка карточек */
 .packages-grid {
   display: grid;
   grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
   gap: 30px;
 }
-
-/* Карточка пакета */
 .package-card {
   position: relative;
   background: var(--card-bg);
   border-radius: var(--radius);
   overflow: hidden;
-  box-shadow: 0 4px 20px rgba(0,0,0,0.05);
+  box-shadow: 0 4px 20px rgba(0, 0, 0, 0.05);
   display: flex;
   flex-direction: column;
   transition: transform var(--transition), box-shadow var(--transition);
 }
 .package-card:hover {
   transform: translateY(-6px);
-  box-shadow: 0 12px 32px rgba(0,0,0,0.1);
+  box-shadow: 0 12px 32px rgba(0, 0, 0, 0.1);
 }
 .badge {
   position: absolute;
@@ -156,8 +201,6 @@ body {
   font-size: 14px;
   font-weight: bold;
 }
-
-/* Заголовок карточки */
 .card-header {
   background: var(--primary);
   color: #fff;
@@ -171,16 +214,12 @@ body {
   font-size: 16px;
   opacity: 0.9;
 }
-
-/* Описание */
 .card-body {
   padding: 20px;
   flex-grow: 1;
   font-size: 14px;
   color: var(--muted);
 }
-
-/* Футер карточки */
 .card-footer {
   padding: 20px;
   display: flex;
@@ -198,20 +237,8 @@ body {
   font-weight: bold;
   color: var(--accent);
 }
-.btn-buy {
-  background: var(--accent);
-  color: #fff;
-  padding: 10px 20px;
-  border-radius: var(--radius);
-  text-decoration: none;
-  font-weight: 600;
-  transition: background var(--transition);
-}
-.btn-buy:hover {
-  background: #1e8e4a;
-}
 
-/* ========== Страница деталей ========== */
+/* ========== Детали ========== */
 .detail-section {
   background: var(--bg);
   padding: 80px 0;
@@ -222,7 +249,7 @@ body {
   margin: 0 auto;
   padding: 40px;
   border-radius: var(--radius);
-  box-shadow: 0 8px 32px rgba(0,0,0,0.06);
+  box-shadow: 0 8px 32px rgba(0, 0, 0, 0.06);
   position: relative;
   text-align: center;
 }
@@ -253,16 +280,25 @@ body {
   justify-content: center;
   flex-wrap: wrap;
 }
-.btn-secondary {
-  background: transparent;
-  border: 2px solid var(--muted);
-  color: var(--muted);
-  padding: 10px 20px;
+
+/* ========== Уведомления (Messages) ========== */
+.alert {
+  padding: 12px 20px;
+  border-radius: var(--radius);
+  margin-bottom: 16px;
+  overflow: hidden;
+  transition: opacity 0.5s ease-out, max-height 0.5s ease-out, margin 0.5s ease-out;
 }
-.btn-secondary:hover {
-  background: var(--muted);
-  color: #fff;
+.alert.hidden {
+  opacity: 0;
+  max-height: 0;
+  margin: 0;
+  padding: 0;
 }
+.alert-success { background: #27ae60; color: #fff; }
+.alert-error   { background: #e74c3c; color: #fff; }
+.alert-warning { background: #f39c12; color: #fff; }
+.alert-info    { background: #3498db; color: #fff; }
 
 /* ========== Футер ========== */
 .site-footer {
