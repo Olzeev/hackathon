@@ -9,6 +9,10 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <link rel="stylesheet" type="text/css" href="{% static 'chat/css/main.css' %}">
     <title>Document</title>
+
+    <meta name="current-user-id" content="{{ request.user.id }}">
+    <meta name="page-user-id"    content="{{ helper.id }}">
+
 </head>
 <body>
     <div class="main-body">
@@ -25,7 +29,7 @@
         </div>
         <!--<button onclick="" id="join-btn">Join</button>-->
         <div class="chat-area">
-            <video class="remote-video" autoplay="true"id="callVideo" src="{% static 'chat/video/filler.mp4' %}" autoplay></video>
+            <video class="remote-video" autoplay="true" id="callVideo" src="{% static 'chat/video/filler.mp4' %}" allow="autoplay"></video>
             <!--<video class="local-video" id="local-video" autoplay ></video>-->
             <div class="textchat">
 
@@ -33,7 +37,7 @@
                 <ul id="chat-log" class="chat-log">
 
                 </ul>
-                <div style="position: relative; display: flex; height: 15%;">
+                <div style="display: flex; width: 100%; position: relative;">
                   <input id="messageInput" type="text" class="message-input" placeholder="Сообщение...">
                   <button type="button" class="btn btn-primary" onclick='sendMessage()'>SEND</button>
                 </div>
@@ -42,13 +46,12 @@
         <div class="container">
           
             <!--WebRTC related code-->
-            <input type="text" id="username" class="form-control" placeholder="Your name"/>
-            <button id="connectButton" type="button" class="btn btn-primary" onclick='connect()'>
-              Connect
-            </button>
-            <button id="btnCreateChat" type="button" class="btn btn-primary" onclick='createOffer()'>
-              Create chat
-            </button>
+
+            {% if request.user.id == helper.id %}
+              <button id="btnCreateChat" type="button" class="btn btn-primary" onclick='createOffer()'>
+                Начать трансляцию
+              </button>
+            {% endif %}
           
             <div class="raw">
               <div class="col-lg-6">
@@ -70,6 +73,10 @@
           
 
 <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+
+<script type="text/javascript">
+  var username = "{{ username }}";
+</script>
 <script src="{% static 'chat/js/client_rtc.js' %}"> </script>
 </body>
 </html>

@@ -9,6 +9,7 @@ def index(request, user_id):
     
     return render(request, 'chat/chat.html', {'helper': user, 
                                               'categories': info.categories.all(), 
+                                              'username': request.user.username,
                                               'info': info})
 
 
