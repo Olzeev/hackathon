@@ -13,6 +13,10 @@
     <div class="logo">🔹 Магазин Баллов</div>
     <div class="auth-buttons">
       {% if user.is_authenticated %}
+        <form action="{% url 'logout' %}" method="post" class="logout-form">
+            {% csrf_token %}
+            <button type="submit" class="btn outlined">Выйти</button>
+        </form>
         <span class="balance">Баланс: {{ balance }} баллов</span>
       {% else %}
         <a href="{% url 'login' %}?next={{ request.path }}" class="btn primary">Войти</a>
