@@ -19,7 +19,7 @@
                 <p class="ph-course" id="course">{{ info.course }}</p>
             </div>
             <div style="position: relative; left: 20px;">
-                <h1 class="ph-name">{{ request.user.username }}</h1>
+                <h1 class="ph-name">{{ helper.username }}</h1>
                 <p class="ph-categories">{% for categ in categories %} {{ categ.name }}  {% endfor %}</p>
             </div>
         </div>
