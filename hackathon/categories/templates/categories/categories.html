@@ -135,9 +135,9 @@
           <ul class="nav-menu">
               {%if user_data.is_mentor%}
               {%if user_data.is_online%}
-              <li><a href="{% url 'become_helper' %}">Завершить трансляцию</a></li>
+              <li><a href="{% url 'stop_stream' %}">Завершить трансляцию</a></li>
               {%else%}
-              <li><a href="{% url 'become_helper' %}">Начать трансляцию</a></li>
+              <li><a href="{% url 'start_stream' %}">Начать трансляцию</a></li>
               {%endif%}
               {%else%}
               <li><a href="{% url 'become_helper' %}">Стать помощником</a></li>
@@ -229,11 +229,15 @@
               <h3>ID: {{ helper.user_id }}</h3>
               <p>{{ helper.description }}</p>
               <p>Рейтинг: {{ helper.rate }}</p>
+<<<<<<< HEAD
                 {% if user.is_authenticated %}
                     <a href="{% url 'chat_view' helper.id %}" class="btn-start-chat">Начать чат</a>
                 {% else %}
                     <a href="{% url 'auth' %}" class="auth-btn outlined">Регистрация</a>
                 {%endif%}
+=======
+              <a href="{% url 'start_stream' %}" class="btn-start-chat">Начать чат</a>
+>>>>>>> 72a51844620ea1d8e8684fdc464304310ce70b33
             </div>
           {% empty %}
             <p>По выбранным фильтрам ничего не найдено.</p>
