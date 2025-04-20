@@ -3,6 +3,7 @@ from django.db import models
 
 class AdditionalInfo(models.Model):
     id = models.AutoField(primary_key=True)
+    user_id = models.IntegerField(default=-1)
     description = models.TextField(max_length=65535, blank=True, null=True, verbose_name="Description")
     rate = models.IntegerField(blank=True, null=True, verbose_name="Rating")
     university = models.CharField(max_length=65535, blank=True, null=True, verbose_name="University")

@@ -5,16 +5,10 @@ from django.contrib import messages
 from .forms import HelperForm
 from .models import AdditionalInfo, Category
 from django.contrib.auth import authenticate, login
-<<<<<<< HEAD
 from django.core.exceptions import ValidationError
 from django.core.validators import validate_email
-=======
 from django.urls import reverse
 
->>>>>>> 14ad123269f3b37081c67d9bf81f57b4ffc0e7be
-
-from django.shortcuts import render, redirect
-from .models import Helper, Category
 
 def categories(request):
     all_categories = Category.objects.all()
@@ -28,13 +22,16 @@ def categories(request):
     helpers = helpers.order_by('-rate')
 
     return render(request, 'categories/categories.html', {
-        'helpers': helpers,
+        'helpers': User.objects.all(),
         'all_categories': all_categories,
         'selected_cats': list(map(int, selected_cats)) if selected_cats else [],
     })
 
+
 def auth(request):
     return render(request, 'categories/auth.html')
+
+
 def register_view(request):
     if request.method == 'POST':
         username = request.POST.get("login")  # <- Изменили 'login' на 'username'
@@ -80,6 +77,7 @@ def register_view(request):
 
     return render(request, 'categories/login.html')
 
+
 def become_helper(request):
     if request.method == 'POST':
         form = HelperForm(request.POST, request.FILES)
@@ -92,6 +90,7 @@ def become_helper(request):
     else:
         form = HelperForm()
     return render(request, 'categories/become_helper.html', {'form': form})
+
 
 def redirect_to_chat(request, helper_id):
     return redirect(reverse('chat:chat-view', kwargs={'user_id': helper_id}))
