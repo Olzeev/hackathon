@@ -5,40 +5,184 @@
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>ЭкспертЧат</title>
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
   <link rel="stylesheet" href="{% static 'categories/css/categories.css' %}">
+  <style>
+    header .container {
+      position: relative;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+    }
+
+    .user-controls {
+      display: flex;
+      align-items: center;
+      gap: 15px;
+    }
+
+    .profile-photo-preview {
+      width: 36px;
+      height: 36px;
+      border-radius: 50%;
+      object-fit: cover;
+      display: block;
+    }
+
+    .logout-btn {
+      background: none;
+      border: none;
+      color: #333;
+      cursor: pointer;
+      font-size: 16px;
+      display: flex;
+      align-items: center;
+      gap: 5px;
+      padding: 5px 10px;
+      border-radius: 4px;
+      transition: background 0.2s;
+    }
+
+    .logout-btn:hover {
+      background: #f0f0f0;
+    }
+
+    .nav-menu {
+      display: flex;
+      gap: 20px;
+    }
+
+    /* Остальные ваши стили */
+    .expert-card {
+      position: relative;
+      padding: 16px;
+      border: 1px solid #e0e0e0;
+      border-radius: 8px;
+      background: #fff;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      text-align: center;
+    }
+
+    .expert-card .photo-wrapper {
+      position: relative;
+      width: 100px;
+      height: 100px;
+      margin-bottom: 12px;
+    }
+
+    .expert-card .photo-wrapper img {
+      width: 100%;
+      height: 100%;
+      object-fit: cover;
+      border-radius: 50%;
+    }
+
+    .expert-card .online-dot {
+      position: absolute;
+      top: 4px;
+      right: 4px;
+      width: 20px;
+      height: 20px;
+      background-color: #28a745;
+      border: 2px solid #fff;
+      border-radius: 50%;
+    }
+
+    .btn-start-chat {
+      margin-top: 12px;
+      padding: 8px 16px;
+      background-color: #28a745;
+      color: #fff;
+      border: none;
+      border-radius: 4px;
+      cursor: pointer;
+      font-size: 14px;
+      text-decoration: none;
+    }
+
+    .btn-start-chat:hover {
+      background-color: #218838;
+    }
+    .nav-menu {
+      display: flex;
+      list-style: none;
+      margin: 0;
+      padding: 0;
+      gap: 20px;
+    }
+
+    .nav-menu a {
+      text-decoration: none;
+      color: #333;
+      font-weight: 500;
+    }
+
+    .nav-menu a:hover {
+      color: #6c63ff;
+    }
+  </style>
 </head>
 <body>
   <header>
     <div class="container">
-      <div class="logo">ЭкспертЧат</div>
-          {% if user.is_authenticated %}
-            <nav>
-              <ul class="nav-menu">
-                <li><a href="#">Помощники</a></li>
-                <li><a href="#">Как это работает</a></li>
-                <li><a href="#">Отзывы</a></li>
-                <li><a href="#">Контакты</a></li>
-              </ul>
-            </nav>
+      <nav ><ul class="nav-menu"><a href="{% url 'categories'%}" style="color: white"><h2>ЭкспертЧат</h2></a></ul></nav>
 
-      <!-- Иконка пользователя -->
-          <div class="user-icon">
-            <i class="fas fa-user"></i>
-          </div>
+
+      {% if user.is_authenticated %}
+        <nav>
+          <ul class="nav-menu">
+              {%if user_data.is_mentor%}
+              {%if user_data.is_online%}
+              <li><a href="{% url 'become_helper' %}">Завершить трансляцию</a></li>
+              {%else%}
+              <li><a href="{% url 'become_helper' %}">Начать трансляцию</a></li>
+              {%endif%}
+              {%else%}
+              <li><a href="{% url 'become_helper' %}">Стать помощником</a></li>
+              {%endif%}
+              
+              
+              
+              
+              <li><a href="#">Как это работает</a></li>
+              <li><a href="#">Отзывы</a></li>
+              <li><a href="#">Контакты</a></li>
+              <!-- Новый пункт: переход в Магазин -->
+              <li>
+                <a href="{% url 'store:store' %}">
+                  Магазин
+                </a>
+              </li>
+            </ul>
+          </nav>
+
+        <div class="user-controls">
+          <a href="{% url 'profile'%}" class="user-icon">
+            <img id="photo-preview" src="{% if user_data.photo %}{{ user_data.photo.url }}{% else %}{% static 'categories/img/default-avatar.png' %}{% endif %}"
+                 alt="Фото профиля" class="profile-photo-preview">
+          </a>
+          
           <form action="{% url 'logout' %}" method="post" class="logout-form">
             {% csrf_token %}
-            <button type="submit" class="auth-btn">Выйти</button>
+            <button type="submit" class="logout-btn">
+              <i class="fas fa-sign-out-alt"></i>
+              <span>Выйти</span>
+            </button>
           </form>
+        </div>
 
-        {% else %}
+      {% else %}
         <div class="auth-buttons">
           <a href="{% url 'login' %}" class="auth-btn">Войти</a>
           <a href="{% url 'auth' %}" class="auth-btn outlined">Регистрация</a>
         </div>
-        {% endif %}
-
+      {% endif %}
     </div>
   </header>
+
+  <!-- Остальное содержимое страницы -->
 
   <section class="hero">
     <div class="container">
@@ -66,32 +210,35 @@
         <button type="submit" class="apply-btn">Показать</button>
       </div>
     </div>
-  </form>
-
-<div class="expert-list">
-    {% for helper in helpers %}
-      <div class="expert-card">
-        <div class="photo-wrapper">
-          {% if helper.photo %}
-            <img src="{{ helper.photo.url }}" alt="{{ helper.name }}">
-          {% else %}
-            <img src="{% static 'categories/img/default-avatar.png' %}" alt="Нет фото">
-          {% endif %}
-          {% if helper.is_online %}
-            <span class="online-dot"></span>
-          {% endif %}
+    <section class="experts">
+      <div class="container">
+        <h2>Доступные помощники</h2>
+        <div class="expert-list">
+          {% for helper in helpers %}
+            <div class="expert-card">
+              <div class="photo-wrapper">
+                <img src="{% if helper.photo %}{{ helper.photo.url }}{% else %}{% static 'categories/img/default-avatar.png' %}{% endif %}"
+                     alt="Фото помощника">
+                {% if helper.is_online %}
+                  <span class="online-dot"></span>
+                {% endif %}
+              </div>
+              {# Если у вас есть связь с User-моделью, можно вывести его имя: #}
+              {# <h3>{{ helper.user.username }}</h3> #}
+              {# А пока просто выведем user_id или любое другое поле: #}
+              <h3>ID: {{ helper.user_id }}</h3>
+              <p>{{ helper.description }}</p>
+              <p>Рейтинг: {{ helper.rate }}</p>
+              <a href="{% url 'chat_view' helper.id %}" class="btn-start-chat">Начать чат</a>
+            </div>
+          {% empty %}
+            <p>По выбранным фильтрам ничего не найдено.</p>
+          {% endfor %}
         </div>
-        <h3>{{ helper.name }}</h3>
-        <p>{{ helper.description }}</p>
-        <p>Рейтинг: {{ helper.rate }}</p>
-
-        <form method="get" action="{% url 'redirect_to_chat' helper.id %}">
-          <button type="submit" class="btn-start-chat">Начать общение</button>
-        </form>
       </div>
-    {% endfor %}
-  </div>
+    </section>
 
+  </form>
 
   <footer>
     <div class="container">
@@ -115,56 +262,3 @@
   </script>
 </body>
 </html>
-
-  <style>
-    /* Если вы не хотите править внешний CSS — можно временно добавить сюда */
-    .expert-card {
-      position: relative;
-      padding: 16px;
-      border: 1px solid #e0e0e0;
-      border-radius: 8px;
-      background: #fff;
-      display: flex;
-      flex-direction: column;
-      align-items: center;
-      text-align: center;
-    }
-    .expert-card .photo-wrapper {
-      position: relative;
-      width: 100px;
-      height: 100px;
-      margin-bottom: 12px;
-    }
-    .expert-card .photo-wrapper img {
-      width: 100%;
-      height: 100%;
-      object-fit: cover;
-      border-radius: 50%;
-    }
-    /* Зелёная точка в углу */
-    .expert-card .online-dot {
-      position: absolute;
-      top: 4px;
-      right: 4px;
-      width: 20px;
-      height: 20px;
-      background-color: #28a745;
-      border: 2px solid #fff;
-      border-radius: 50%;
-    }
-    /* Кнопка «Начать общение» */
-    .btn-start-chat {
-      margin-top: 12px;
-      padding: 8px 16px;
-      background-color: #28a745;
-      color: #fff;
-      border: none;
-      border-radius: 4px;
-      cursor: pointer;
-      font-size: 14px;
-      text-decoration: none;
-    }
-    .btn-start-chat:hover {
-      background-color: #218838;
-    }
-  </style>

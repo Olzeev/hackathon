@@ -1,0 +1,335 @@
+{% load static %}
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Редактирование профиля | ЭкспертЧат</title>
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+  <link rel="stylesheet" href="{% static 'categories/css/categories.css' %}">
+  <style>
+    /* Основные стили */
+    body {
+      font-family: Arial, sans-serif;
+      margin: 0;
+      padding: 0;
+      background-color: #f5f5f5;
+    }
+
+    .container {
+      width: 90%;
+      max-width: 1200px;
+      margin: 0 auto;
+      padding: 0 15px;
+    }
+
+    header {
+      background-color: white;
+      box-shadow: 0 2px 5px rgba(0,0,0,0.1);
+      padding: 15px 0;
+      position: relative;
+    }
+
+    .nav-menu {
+      display: flex;
+      list-style: none;
+      margin: 0;
+      padding: 0;
+      gap: 20px;
+    }
+
+    .nav-menu a {
+      text-decoration: none;
+      color: #333;
+      font-weight: 500;
+    }
+
+    .nav-menu a:hover {
+      color: #6c63ff;
+    }
+
+    .user-controls {
+      position: absolute;
+      right: 15px;
+      top:  5px;
+      display: flex;
+      align-items: center;
+      gap: 15px;
+    }
+
+    .profile-status {
+      position: relative;
+    }
+
+    .profile-photo-preview {
+      width: 40px;
+      height: 40px;
+      border-radius: 50%;
+      object-fit: cover;
+      border: 2px solid #6c63ff;
+    }
+
+    .online-dot {
+      position: absolute;
+      bottom: 0;
+      right: 0;
+      width: 12px;
+      height: 12px;
+      background-color: #28a745;
+      border: 2px solid white;
+      border-radius: 50%;
+    }
+
+    .auth-btn {
+      background: #6c63ff;
+      color: white;
+      border: none;
+      padding: 8px 15px;
+      border-radius: 20px;
+      cursor: pointer;
+      font-size: 14px;
+      transition: background 0.3s;
+      display: flex;
+      align-items: center;
+      gap: 5px;
+    }
+
+    .auth-btn:hover {
+      background: #5a52d3;
+    }
+
+    .balance-btn {
+      background: #28a745;
+      color: white;
+      border: none;
+      padding: 8px 15px;
+      border-radius: 20px;
+      cursor: default;
+      font-size: 14px;
+      display: flex;
+      align-items: center;
+      gap: 5px;
+    }
+
+    /* Стили для формы редактирования профиля */
+    .edit-profile-container {
+      max-width: 800px;
+      margin: 40px auto;
+      padding: 30px;
+      background: white;
+      border-radius: 10px;
+      box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+    }
+
+    .edit-profile-header {
+      text-align: center;
+      margin-bottom: 30px;
+    }
+
+    .profile-photo-upload {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      margin-bottom: 20px;
+      position: relative;
+    }
+
+    .profile-photo-large {
+      width: 150px;
+      height: 150px;
+      border-radius: 50%;
+      object-fit: cover;
+      margin-bottom: 15px;
+      border: 3px solid #6c63ff;
+    }
+
+    .rating-display {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      gap: 5px;
+      margin: 10px 0;
+    }
+
+    .rating-stars {
+      color: #FFD700;
+    }
+
+    .form-group {
+      margin-bottom: 20px;
+    }
+
+    .form-group label {
+      display: block;
+      margin-bottom: 8px;
+      font-weight: 600;
+      color: #555;
+    }
+
+    .form-control {
+      width: 100%;
+      padding: 10px 15px;
+      border: 1px solid #ddd;
+      border-radius: 5px;
+      font-size: 16px;
+    }
+
+    textarea.form-control {
+      min-height: 100px;
+      resize: vertical;
+    }
+
+    .btn-save {
+      background: #6c63ff;
+      color: white;
+      border: none;
+      padding: 12px 25px;
+      border-radius: 5px;
+      cursor: pointer;
+      font-size: 16px;
+      transition: background 0.3s;
+      width: 100%;
+    }
+
+    .btn-save:hover {
+      background: #5a52d3;
+    }
+
+    footer {
+      background-color: #333;
+      color: white;
+      text-align: center;
+      padding: 20px 0;
+      margin-top: 40px;
+    }
+  </style>
+</head>
+<body>
+  <header>
+    <div class="container">
+      <nav>
+        <ul class="nav-menu">
+          <li><a href="{% url 'categories'%}"><h3>ЭкспертЧат</h3></a></li>
+          <li><a href="#">Помощники</a></li>
+          <li><a href="#">Как это работает</a></li>
+          <li><a href="#">Отзывы</a></li>
+          <li><a href="#">Контакты</a></li>
+        </ul>
+      </nav>
+
+      <div class="user-controls">
+        <div class="balance-btn">
+          <i class="fas fa-wallet"></i> {{ user_data.balance }} баллов
+        </div>
+
+        <div class="profile-status">
+          <a href="{% url 'profile'%}" class="user-icon">
+            <img src="{% if user_data.photo %}{{ user_data.photo.url }}{% else %}{% static 'categories/img/default-avatar.png' %}{% endif %}"
+                 alt="Фото профиля" class="profile-photo-preview">
+            {% if user_data.is_online %}
+              <span class="online-dot"></span>
+            {% endif %}
+          </a>
+        </div>
+
+        <form action="{% url 'logout' %}" method="post" class="logout-form">
+          {% csrf_token %}
+          <button type="submit" class="auth-btn">
+            <i class="fas fa-sign-out-alt"></i> Выйти
+          </button>
+        </form>
+      </div>
+    </div>
+  </header>
+
+  <div class="edit-profile-container">
+    <div class="edit-profile-header">
+      <h1>Редактирование профиля эксперта</h1>
+    </div>
+
+    <form method="post" enctype="multipart/form-data" action="{% url 'change_profile'%}">
+      {% csrf_token %}
+
+      <div class="profile-photo-upload">
+        <img id="photo-preview" src="{% if user_data.photo %}{{ user_data.photo.url }}{% else %}{% static 'categories/img/default-avatar.png' %}{% endif %}"
+             alt="Фото профиля" class="profile-photo-large">
+        {% if user_data.is_online %}
+          <span class="online-dot"></span>
+        {% endif %}
+
+        <!-- Рейтинг под аватаркой -->
+        <div class="rating-display">
+          <span>Рейтинг:</span>
+          <div class="rating-stars">
+            {% for i in "12345" %}
+              {% if forloop.counter <= user_data.rate %}
+                <i class="fas fa-star"></i>
+              {% else %}
+                <i class="far fa-star"></i>
+              {% endif %}
+            {% endfor %}
+            <span>({{ user_data.rate|floatformat:1 }})</span>
+          </div>
+        </div>
+
+        <input type="file" id="photo-upload" name="photo" accept="image/*" style="display: none;">
+        <button type="button" onclick="document.getElementById('photo-upload').click()" class="btn-save" style="width: auto; margin-top: 10px;">
+          Изменить фото
+        </button>
+      </div>
+
+      <!-- Остальные поля формы -->
+      <div class="form-group">
+        <label for="description">О себе</label>
+        <textarea id="description" name="description" class="form-control"
+                  placeholder="{{user_data.description}}">{{ user_data.description }}</textarea>
+      </div>
+
+      <div class="form-group">
+        <label for="university">Университет</label>
+        <input type="text" id="university" name="university" class="form-control"
+               value="{{ user_data.university }}" placeholder="{{user_data.university}}">
+      </div>
+
+      <div class="form-group">
+        <label for="course">Курс</label>
+         <input type="text" id="course" name="course" class="form-control"
+               value="{{ user_data.course }}" placeholder="{{ user_data.course }}">
+      </div>
+
+      <div class="form-group">
+        <label for="phone">Телефон</label>
+        <input type="tel" id="phone" name="phone" class="form-control"
+               value="{{ user_data.phone }}" placeholder="{{ user_data.phone }}">
+      </div>
+
+      <button type="submit" class="btn-save">Сохранить изменения</button>
+    </form>
+  </div>
+
+  <footer>
+    <div class="container">
+      <p>&copy; 2025 ЭкспертЧат. Все права защищены.</p>
+    </div>
+  </footer>
+
+  <script>
+    // Превью загружаемого фото
+    document.getElementById('photo-upload').addEventListener('change', function(e) {
+      if (e.target.files && e.target.files[0]) {
+        const reader = new FileReader();
+        reader.onload = function(event) {
+          document.getElementById('photo-preview').src = event.target.result;
+        };
+        reader.readAsDataURL(e.target.files[0]);
+      }
+    });
+
+    // Маска для телефона
+    document.getElementById('phone').addEventListener('input', function(e) {
+      let x = e.target.value.replace(/\D/g, '').match(/(\d{0,1})(\d{0,3})(\d{0,3})(\d{0,2})(\d{0,2})/);
+      e.target.value = '+7' + (x[2] ? ' (' + x[2] : '') + (x[3] ? ') ' + x[3] : '') + (x[4] ? '-' + x[4] : '') + (x[5] ? '-' + x[5] : '');
+    });
+  </script>
+</body>
+</html>

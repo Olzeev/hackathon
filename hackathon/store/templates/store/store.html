@@ -2,52 +2,98 @@
 <!DOCTYPE html>
 <html lang="ru">
 <head>
-    <meta charset="UTF-8">
-    <title>Магазин баллов</title>
-    <link rel="stylesheet" href="{% static 'css/store.css' %}">
+  <meta charset="UTF-8">
+  <title>Магазин баллов</title>
+  <link rel="stylesheet" href="{% static 'css/store.css' %}">
 </head>
 <body>
 
-<header>
-    <div class="container" style="display: flex; justify-content: space-between; align-items: center;">
-        <div class="logo">Магазин Баллов</div>
-        <div class="auth-buttons">
-            <a href="#" class="btn">Войти</a>
-            <a href="#" class="btn">Регистрация</a>
-        </div>
+<header class="site-header">
+  <div class="container header-inner">
+    <div class="logo">🔹 Магазин Баллов</div>
+    <div class="auth-buttons">
+      {% if user.is_authenticated %}
+        <form action="{% url 'logout' %}" method="post" class="logout-form">
+            {% csrf_token %}
+            <button type="submit" class="btn outlined">Выйти</button>
+        </form>
+        <span class="balance">Баланс: {{ balance }} баллов</span>
+      {% else %}
+        <a href="{% url 'login' %}?next={{ request.path }}" class="btn primary">Войти</a>
+        <a href="{% url 'auth' %}" class="btn outlined">Регистрация</a>
+      {% endif %}
     </div>
+  </div>
 </header>
 
 <section class="hero">
-    <div class="container">
-        <h1>Купи баллы и получи преимущества</h1>
-        <p>Выбирай пакет, пополняй счет и получай доступ к дополнительным возможностям!</p>
-    </div>
+  <div class="container">
+    <h1>Купи баллы — открой новые возможности</h1>
+    <p>Выберите подходящий пакет и получите максимум преимуществ!</p>
+  </div>
 </section>
 
-<section class="experts">
-    <div class="container">
-        <h2>Пакеты баллов</h2>
-        <div class="expert-list">
-            {% for package in packages %}
-            <form method="post" action="{% url 'buy_package' package.id %}" class="expert-card-button">
-                {% csrf_token %}
-                <div class="expert-card">
-                    <h3>{{ package.name }}</h3>
-                    <p>{{ package.description }}</p>
-                    <p><strong>{{ package.points }} баллов</strong></p>
-                    <p>Цена: {{ package.price }} ₽</p>
-                    <button type="submit" class="btn-primary">Купить</button>
-                </div>
-            </form>
-            {% endfor %}
+<main class="packages-section">
+  <div class="container">
+    <div class="section-title">
+      <h2>Наши пакеты</h2>
+      <div class="underline"></div>
+    </div>
+    <div class="packages-grid">
+      {% for package in packages %}
+        <div class="package-card">
+          {% if package.discount %}
+            <div class="badge">‑{{ package.discount }}%</div>
+          {% endif %}
+          <div class="card-header">
+            <h3>{{ package.name }}</h3>
+            <div class="points">{{ package.points }} баллов</div>
+          </div>
+          <div class="card-body">
+            <p>{{ package.description }}</p>
+          </div>
+          <div class="card-footer">
+            <div class="price-block">
+              {% if package.discount %}
+                <span class="old-price">{{ package.price }} ₽</span>
+              {% endif %}
+              <span class="new-price">{{ package.sell_price }} ₽</span>
+            </div>
+            <a href="{{ package.get_absolute_url }}" class="btn btn-buy">Купить</a>
+          </div>
         </div>
+      {% endfor %}
     </div>
-</section>
+  </div>
+</main>
 
-<footer>
-    <p>&copy; 2025 Магазин Баллов. Все права защищены.</p>
+<footer class="site-footer">
+  <div class="container">
+    <p>© 2025 Магазин Баллов. Все права защищены.</p>
+  </div>
 </footer>
 
 </body>
+{% if messages %}
+  <div class="container" style="margin-top:20px;">
+    {% for message in messages %}
+      <div class="alert alert-{{ message.tags }}">
+        {{ message }}
+      </div>
+    {% endfor %}
+  </div>
+{% endif %}
+<script>
+  document.addEventListener('DOMContentLoaded', function() {
+    // Находим все .alert и ставим отложенное скрытие
+    document.querySelectorAll('.alert').forEach(function(alert){
+      // Через 3 секунды добавляем класс .hidden
+      setTimeout(function(){
+        alert.classList.add('hidden');
+        // Удаляем из DOM после окончания transition (0.5s)
+        setTimeout(function(){ alert.remove(); }, 500);
+      }, 3000);
+    });
+  });
+</script>
 </html>
