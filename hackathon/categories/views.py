@@ -106,6 +106,7 @@ def change_profile(request):
     description = request.POST.get('description', '').strip()
     university  = request.POST.get('university', '').strip()
     course      = request.POST.get('course', '').strip()
+    phone       = request.POST.get('phone',  '').strip()
     photo_file  = request.FILES.get('photo')
 
     # Берём или создаём запись
@@ -116,7 +117,8 @@ def change_profile(request):
     user_data.university  = university
     if course:
         user_data.course = course
-
+    if phone:
+        user_data.phone = phone
     # Если пришёл новый файл — удаляем старый (если он был) и сохраняем новый
     if photo_file:
         # удалит файл из MEDIA_ROOT, но не затронет статический дефолт
@@ -127,4 +129,4 @@ def change_profile(request):
     # Финальное сохранение
     user_data.save()
     messages.success(request, "Профиль успешно обновлён")
-    return redirect('profile')
+    return redirect('categories')

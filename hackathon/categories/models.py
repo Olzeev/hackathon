@@ -7,11 +7,12 @@ class AdditionalInfo(models.Model):
     id = models.AutoField(primary_key=True)
     user_id = models.IntegerField(default = 0)
     description = models.TextField(max_length=65535, blank=True, null=True, verbose_name="Description", default="Ваше описание")
-    rate = models.IntegerField(blank=True, null=True, verbose_name="Rating", default = 5)
+    rate = models.FloatField(blank=True, null=True, verbose_name="Rating", default = 5.0)
     university = models.CharField(max_length=65535, blank=True, null=True, verbose_name="Название университета", default = "")
     course = models.IntegerField(blank=True, null=True, verbose_name="Course", default=1)
     rank = models.IntegerField(blank=True, null=True, verbose_name="Rank", default=1)
     is_mentor = models.BooleanField(default = False)
+    phone = models.CharField(max_length = 15, default = "+7 (XXX) XXX-XX-XX")
 
     balance = models.PositiveIntegerField(
         default = 0,
