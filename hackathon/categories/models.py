@@ -1,5 +1,5 @@
 from email.policy import default
-
+from django.contrib.auth.models import User
 from django.db import models
 
 
@@ -43,8 +43,15 @@ class AdditionalInfo(models.Model):
         verbose_name = "Additional info"
         verbose_name_plural = "Additional info"
 
-    def str(self):
-        return self.id
+    @property
+    def username(self):
+        user = User.objects.filter(pk=self.user_id).first()
+        return user.username if user else '—'
+    
+    def __str__(self):
+        return self.username
+    
+
 
 
 class Category(models.Model):
@@ -55,6 +62,6 @@ class Category(models.Model):
         verbose_name = "Category"
         verbose_name_plural = "Categories"
 
-    def str(self):
+    def __str__(self):
         return self.name
 
