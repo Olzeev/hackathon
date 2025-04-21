@@ -1,161 +1,183 @@
-// client_rtc.js — финальная мультипеерная версия 02 May 2025
-// -------------------------------------------------------------
-// • Стример ↔ каждый зритель = отдельный RTCPeerConnection + DataChannel.
-// • Чат у всех синхронизирован, скролл всегда внизу (как Twitch).
-// • Файл полностью самодостаточный: замените static/chat/js/client_rtc.js.
+// client_rtc.js — мультиплеерная версия с историей и без дублирования
+// Метатеги в chat.html:
+// <meta name="current-user-id" content="{{ request.user.id }}">
+// <meta name="page-user-id"    content="{{ helper.id }}">
+// <script>var username = "{{ username }}";</script>
 
-/* Метатеги в chat.html
-<meta name="current-user-id" content="{{ request.user.id }}">
-<meta name="page-user-id"    content="{{ helper.id }}">
-<script>var username = "{{ username }}";</script>
-*/
-
-//--------------------------------------------------
-// Общие переменные
-//--------------------------------------------------
 const curId   = +document.querySelector('meta[name="current-user-id"]').content;
 const pageId  = +document.querySelector('meta[name="page-user-id"]').content;
-const isOwner = curId === pageId;              // true = стример
+const isOwner = curId === pageId;
 
-// UI элементы
+// UI
 const videoEl   = document.getElementById('callVideo');
 const chatUl    = document.getElementById('chat-log');
 const inputBox  = document.getElementById('messageInput');
 const btnSend   = document.querySelector('.message-input button');
 const btnCamera = document.getElementById('getMedia');
 
-//--------------------------------------------------
-// WebSocket
-//--------------------------------------------------
+// WebSocket для сигналинга + чата
 const ws = new WebSocket(`ws://${location.host}/chat/${pageId}`);
 ws.addEventListener('open', () => {
-  if (!isOwner) sendWS({type:'hello', from:curId, to:pageId});
+  if (!isOwner) {
+    // зритель говорит «привет» стримеру, чтобы тот установил WebRTC
+    sendWS({ type:'hello', from:curId, to:pageId });
+  }
 });
 ws.addEventListener('message', async ev => {
   const msg = JSON.parse(ev.data);
-  if (msg.to && msg.to !== curId) return; // сообщение не мне
+  // если указан to и не нам — игнорируем
+  if (msg.to != null && msg.to !== curId) return;
   await handleSignal(msg);
 });
-function sendWS(obj){ ws.readyState===1 && ws.send(JSON.stringify(obj)); }
+function sendWS(obj) {
+  if (ws.readyState === 1) ws.send(JSON.stringify(obj));
+}
 
-//--------------------------------------------------
-// Media + PeerConnections
-//--------------------------------------------------
-const iceConfig = { iceServers:[{urls:'stun:stun.l.google.com:19302'}] };
-let localStream = null;                       // для стримера
-const pcs  = {};                              // viewerId -> RTCPeerConnection
-const dcs  = {};                              // viewerId -> DataChannel
+// WebRTC setup
+const iceConfig = { iceServers:[{ urls:'stun:stun.l.google.com:19302' }] };
+let localStream = null;
+const pcs = {};  // RTCPeerConnection по viewerId
+const dcs = {};  // DataChannel по viewerId
 
-async function startCamera(){
-  try{
-    localStream = await navigator.mediaDevices.getUserMedia({video:true,audio:false});
+// Стример может включить камеру
+async function startCamera() {
+  try {
+    localStream = await navigator.mediaDevices.getUserMedia({ video:true, audio:false });
     videoEl.srcObject = localStream;
     videoEl.muted = true;
     await videoEl.play().catch(()=>{});
     btnCamera.disabled = true;
-  }catch(e){ alert('Не удалось получить камеру: '+e); }
+  } catch (e) {
+    alert('Не удалось получить камеру: '+e);
+  }
 }
 if (btnCamera) btnCamera.onclick = startCamera;
 
-//--------------------------------------------------
-// Обработка сигналов
-//--------------------------------------------------
-async function handleSignal({type, from, to, payload}){
-  // -------- зритель ---------
-  if (!isOwner){
-    switch(type){
+// Обработка всех входящих сигналов
+async function handleSignal({ type, from, to, payload }) {
+  // --- ЗРИТЕЛЬ ---
+  if (!isOwner) {
+    switch(type) {
       case 'offer':
+        // получили SDP‑офер от стримера
         const pc = new RTCPeerConnection(iceConfig);
         pcs[pageId] = pc;
-        pc.ontrack = e => { const [s]=e.streams; videoEl.srcObject=s; videoEl.play(); };
-        pc.ondatachannel = e => { dcs[pageId]=e.channel; e.channel.onmessage=ev=>addMsg(ev.data); };
-        pc.onicecandidate = e=>{ if(e.candidate) sendWS({type:'candidate',from:curId,to:from,payload:e.candidate}); };
+        pc.ontrack = e => {
+          videoEl.srcObject = e.streams[0];
+          videoEl.play();
+        };
+        pc.ondatachannel = e => {
+          // DataChannel только для чата стримера
+          dcs[pageId] = e.channel;
+          e.channel.onmessage = ev => addMsg(ev.data);
+        };
+        pc.onicecandidate = e => {
+          if (e.candidate) {
+            sendWS({ type:'candidate', from:curId, to:from, payload:e.candidate });
+          }
+        };
         await pc.setRemoteDescription(payload);
         const ans = await pc.createAnswer();
         await pc.setLocalDescription(ans);
-        sendWS({type:'answer',from:curId,to:from,payload:ans});
+        sendWS({ type:'answer', from:curId, to:from, payload:ans });
         break;
+
       case 'candidate':
-        pcs[pageId] && pcs[pageId].addIceCandidate(new RTCIceCandidate(payload));
+        pcs[pageId]?.addIceCandidate(new RTCIceCandidate(payload));
         break;
+
       case 'chat':
-        addMsg(payload);
+        // WS‑рассылка: показываем только чужие и историю (from неопределён)
+        if (from !== pageId) {
+          addMsg(payload);
+        }
         break;
     }
     return;
   }
-  // -------- стример ---------
-  switch(type){
+
+  // --- СТРИМЕР ---
+  switch(type) {
     case 'hello':
-      if(!localStream) return;               // камеру ещё не включили
-      createConnectionForViewer(from);
+      if (localStream) createConnectionForViewer(from);
       break;
+
     case 'answer':
-      pcs[from] && pcs[from].setRemoteDescription(payload);
+      pcs[from]?.setRemoteDescription(payload);
       break;
+
     case 'candidate':
-      pcs[from] && pcs[from].addIceCandidate(new RTCIceCandidate(payload));
+      pcs[from]?.addIceCandidate(new RTCIceCandidate(payload));
       break;
+
     case 'chat':
-      addMsg(payload);                      // показываем в своём чате
-      broadcastChat(from, payload);         // репост остальным
+      // WS‑рассылка: стример видит все, но дублируем по DC только свои
+      addMsg(payload);
+      if (from === curId) {
+        broadcastDC(payload);
+      }
       break;
   }
 }
 
-//--------------------------------------------------
-// Стример: создаём PC + DC на каждого зрителя
-//--------------------------------------------------
-async function createConnectionForViewer(viewerId){
-  if(pcs[viewerId]) return;                  // уже есть
+// Стример создаёт RTCPeerConnection + DataChannel для каждого зрителя
+async function createConnectionForViewer(viewerId) {
+  if (pcs[viewerId]) return;
   const pc = new RTCPeerConnection(iceConfig);
   pcs[viewerId] = pc;
 
-  // media tracks
-  localStream.getTracks().forEach(t=>pc.addTrack(t,localStream));
+  // видео‑трек
+  localStream.getTracks().forEach(t => pc.addTrack(t, localStream));
 
-  // ICE
-  pc.onicecandidate = e=>{ if(e.candidate) sendWS({type:'candidate',from:curId,to:viewerId,payload:e.candidate}); };
+  pc.onicecandidate = e => {
+    if (e.candidate) {
+      sendWS({ type:'candidate', from:curId, to:viewerId, payload:e.candidate });
+    }
+  };
 
-  // DataChannel
+  // DataChannel: стример → зритель
   const dc = pc.createDataChannel('chat');
   dcs[viewerId] = dc;
-  dc.onopen = ()=>console.log('DC open with', viewerId);
-  dc.onmessage = ev=>{ addMsg(ev.data); broadcastChat(viewerId, ev.data); };
+  dc.onopen = () => console.log('Chat DC open with', viewerId);
 
-  // Offer
+  // Получаем сообщения от зрителя (теоретически; но мы их не ретранслируем через DC)
+  dc.onmessage = ev => {
+    // ничего не делаем — WS уже покроет их чатом
+  };
+
+  // создаём офер
   const offer = await pc.createOffer();
   await pc.setLocalDescription(offer);
-  sendWS({type:'offer',from:curId,to:viewerId,payload:offer});
+  sendWS({ type:'offer', from:curId, to:viewerId, payload:offer });
 }
 
-//--------------------------------------------------
-// Чат
-//--------------------------------------------------
-function addMsg(text){
-  const li=document.createElement('li');
-  li.textContent=text;
+// Добавление сообщения в HTML
+function addMsg(text) {
+  const li = document.createElement('li');
+  li.textContent = text;
   chatUl.appendChild(li);
-  chatUl.scrollTop = chatUl.scrollHeight;    // авто‑скролл вниз
+  chatUl.scrollTop = chatUl.scrollHeight;
 }
 
+// Отправка нового сообщения из input
 btnSend?.addEventListener('click', sendMessage);
-function sendMessage(){
+function sendMessage() {
   const txt = inputBox.value.trim();
-  if(!txt) return;
-  const message = `${username||'Гость'}: ${txt}`;
-  addMsg(message);                           // локально
+  if (!txt) return;
+  const message = `${username || 'Гость'}: ${txt}`;
 
-  if(isOwner){
-    broadcastChat(curId, message);           // стример всем
-  }else{
-    sendWS({type:'chat',from:curId,to:pageId,payload:message});
-  }
-  inputBox.value='';
+  // шлём ВСЕМ через WS (сохранение в БД + история)
+  sendWS({ type:'chat', from:curId, to:pageId, payload:message });
+
+  // сбрасываем input
+  inputBox.value = '';
 }
-function broadcastChat(excludeId, message){
-  // стример шлёт всем DC, кроме отправителя
-  Object.entries(dcs).forEach(([vid,dc])=>{
-    if(+vid!==excludeId && dc.readyState==='open') dc.send(message);
+
+// Дублируем только стримерские сообщения по DataChannel
+function broadcastDC(message) {
+  Object.values(dcs).forEach(dc => {
+    if (dc.readyState === 'open') {
+      dc.send(message);
+    }
   });
 }
