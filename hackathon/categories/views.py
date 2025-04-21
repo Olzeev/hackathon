@@ -117,8 +117,8 @@ def redirect_to_chat(request, helper_id):
 
 def profile(request):
     user_id = request.user.id
-    user_data = AdditionalInfo.objects.get_or_create(user_id = user_id)
-    return render(request, 'categories/profile.html', {'user_data': user_data[0]})
+    user_data, _ = AdditionalInfo.objects.get_or_create(user_id = user_id)
+    return render(request, 'categories/profile.html', {'user_data': user_data})
 
 
 def change_profile(request):

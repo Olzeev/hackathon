@@ -1,6 +1,7 @@
 from email.policy import default
 from django.contrib.auth.models import User
 from django.db import models
+from django.templatetags.static import static
 
 
 class AdditionalInfo(models.Model):
@@ -24,8 +25,14 @@ class AdditionalInfo(models.Model):
         blank=True,
         null=True,
         verbose_name='Profile Photo', 
-        default='media/default/default-avatar.png'
     )
+
+    def photo_url(self):
+        # есть имя и файл?
+        if self.photo and self.photo.name:
+            return self.photo.url
+        # иначе — статика
+        return static('categories/img/default-avatar.png')
     # Online status
     is_online = models.BooleanField(
         default=False,
