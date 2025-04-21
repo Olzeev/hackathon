@@ -1,5 +1,4 @@
 {% load static %}
-{% csrf_token %}
 <!DOCTYPE html>
 <html lang="ru">
 <head>
@@ -14,34 +13,35 @@
 <body>
   <div class="main-body">
 
-    <!-- шапка -->
+    <!-- Шапка помощника -->
     <div class="person-header">
-      <div>
-        <img src="{{ info.photo.url }}"  class="ph-avatar">
-      </div>
-      <div style="margin-left:20px">
-        <h1  class="ph-name">{{ helper.username }}</h1>
-        <p   class="ph-categories">
+      <img src="{{ info.photo.url }}" class="ph-avatar" alt="Аватар">
+      <div class="ph-info">
+        <h1 class="ph-name">{{ helper.username }}</h1>
+        <p class="ph-categories">
           {% for c in categories %}{{ c.name }}{% if not forloop.last %}, {% endif %}{% endfor %}
         </p>
       </div>
     </div>
 
-    <!-- видео + чат -->
+    <!-- Контейнер видео и чата -->
     <div class="chat-area">
+      <!-- Видео-поток -->
       <video id="callVideo" class="remote-video" autoplay playsinline></video>
 
+      <!-- Текстовый чат -->
       <div class="textchat">
         <ul id="chat-log" class="chat-log"></ul>
-        <div style="display:flex;width:100%;">
-          <input id="messageInput" type="text" class="message-input" placeholder="Сообщение…">
-          <button type="button" class="btn btn-primary" onclick="sendMessage()">Отправить</button>
+        <div class="message-input">
+          <input id="messageInput" type="text" placeholder="Сообщение…">
+          <button onclick="sendMessage()">Отправить</button>
         </div>
       </div>
     </div>
 
+    <!-- Кнопка включения камеры только для стримера -->
     {% if request.user.id == helper.id %}
-      <div style="text-align:right;margin-top:20px;">
+      <div class="controls">
         <button id="getMedia" class="btn btn-success">Включить камеру</button>
       </div>
     {% endif %}

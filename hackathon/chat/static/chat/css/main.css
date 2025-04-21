@@ -1,198 +1,33 @@
 :root {
-    --primary-color: #4a90e2;
-    --secondary-color: #357ae8;
-    --accent-color: #27ae60;
-    --bg-color: #f7f9fc;
-    --card-bg: #ffffff;
-    --text-color: #333333;
-    --muted-color: #777777;
-    --border-radius: 8px;
-    --transition: 0.3s ease;
-  }
-  
-
-  
-  * {
-    box-sizing: border-box;
-    margin: 0;
-    padding: 0;
-  }
-  
-  body {
-    font-family: 'Segoe UI', sans-serif;
-    background-color: var(--bg-color);
-    color: var(--text-color);
-  }
-  
-  .main-body {  
-    max-width: 1200px;
-    margin: 20px auto;
-    padding: 20px;
-    background-color: var(--card-bg);
-    border-radius: var(--border-radius);
-    box-shadow: 0 2px 8px rgba(0,0,0,0.1);
-  }
-  
-  .person-header {
-    display: flex;
-    align-items: center;
-    gap: 20px;
-    margin-bottom: 20px;
-  }
-  
-  .person-header > div:nth-child(2) {
-    margin-left: 20px;
-  }
-  
-  .ph-avatar {
-    width: 100px;
-    height: 100px;
-    border-radius: 50%;
-    object-fit: cover;
-    border: 2px solid var(--primary-color);
-  }
-  
-  .ph-name {
-    margin: 0;
-    font-size: 24px;
-    color: var(--primary-color);
-  }
-  
-  .ph-rating,
-  .ph-course,
-  .ph-categories {
-    margin: 4px 0;
-    font-size: 14px;
-    color: var(--muted-color);
-  }
-  
-  .chat-area {
-    display: flex;
-    gap: 20px;
-  }
-  
-  
-  .local-video {
-    position: absolute;
-    width: 200px;
-    height: 150px;
-    bottom: 20px;
-    right: 20px;
-    border: 2px solid var(--card-bg);
-    border-radius: var(--border-radius);
-    object-fit: cover;
-  }
-  
-  
-  .chat-log {
-    flex: 1;
-    list-style: none;
-    padding: 10px;
-    overflow-y: auto;
-  }
-  
-  .chat-log li {
-    margin-bottom: 10px;
-    padding: 8px 12px;
-    background-color: #f1f1f1;
-    border-radius: var(--border-radius);
-  }
-  
-  .message-input {
-    display: flex;
-    border-top: 1px solid #e0e0e0;
-  }
-  
-  .message-input input {
-    flex: 1;
-    border: none;
-    padding: 10px;
-    font-size: 14px;
-  }
-  
-  .message-input input:focus {
-    outline: none;
-  }
-  
-  .message-input button {
-    border: none;
-    background-color: var(--primary-color);
-    color: #fff;
-    padding: 0 20px;
-    cursor: pointer;
-    transition: background var(--transition);
-  }
-  
-  .message-input button:hover {
-    background-color: var(--secondary-color);
-  }
-  
-  .btn {
-    display: inline-block;
-    padding: 8px 16px;
-    border: none;
-    border-radius: var(--border-radius);
-    cursor: pointer;
-    font-size: 14px;
-    text-decoration: none;
-    text-align: center;
-    background-color: var(--primary-color);
-    color: #fff;
-    transition: background var(--transition);
-  }
-  
-  .btn-primary:hover {
-    background-color: var(--secondary-color);
-  }
-  
-  .btn-success {
-    background-color: var(--accent-color);
-  }
-  
-  .btn-success:hover {
-    background-color: #229e50;
-  }
-  
-  .form-control {
-    padding: 8px;
-    border: 1px solid #ccc;
-    border-radius: var(--border-radius);
-    font-size: 14px;
-    width: 100%;
-    box-sizing: border-box;
-    margin-bottom: 10px;
-  }
-  
-  .raw {
-    margin-top: 20px;
-  }
-  
-/* Делим .chat-area на 70% видео и 30% чат */
-.chat-area {
-  display: flex;
-  align-items: flex-start;
-  gap: 20px;
+  --primary-color: #4a90e2;
+  --secondary-color: #357ae8;
+  --bg-color: #f7f9fc;
+  --card-bg: #ffffff;
+  --text-color: #333333;
+  --border-radius: 8px;
+  --transition: 0.3s ease;
 }
+* { box-sizing: border-box; margin: 0; padding: 0; }
+body { font-family: 'Segoe UI', sans-serif; background: var(--bg-color); color: var(--text-color); }
+.main-body { max-width: 1200px; margin: 20px auto; padding: 20px; background: var(--card-bg); border-radius: var(--border-radius); box-shadow: 0 2px 8px rgba(0,0,0,0.1); }
+.person-header { display: flex; align-items: center; gap: 20px; margin-bottom: 20px; }
+.ph-avatar { width: 100px; height: 100px; border-radius: 50%; object-fit: cover; border: 2px solid var(--primary-color); }
+.ph-info { margin-left: 20px; }
+.ph-name { margin: 0; font-size: 24px; color: var(--primary-color); }
+.ph-categories { margin: 4px 0; font-size: 14px; color: var(--text-color); }
 
-/* Видео — ровно 70% ширины, не больше 800px */
-.remote-video {
-  flex: 0 0 70%;
-  max-width: 800px;
-  height: 500px;
-  background-color: #000;
-  object-fit: cover;
-  border-radius: var(--border-radius);
-}
+/* Видео + чат */
+.chat-area { display: flex; align-items: flex-start; gap: 20px; }
+.remote-video { flex: 0 0 70%; aspect-ratio: 16/9; background: #000; border-radius: var(--border-radius); object-fit: cover; }
+.textchat { flex: 0 0 30%; display: flex; flex-direction: column; background: var(--card-bg); border: 1px solid #e0e0e0; border-radius: var(--border-radius); overflow: hidden; }
+.chat-log { flex: 1; padding: 10px; list-style: none; overflow-y: auto; }
+.chat-log li { margin-bottom: 10px; padding: 8px 12px; background: #f1f1f1; border-radius: var(--border-radius); }
+.message-input { flex: 0 0 auto; display: flex; border-top: 1px solid #e0e0e0; padding: 10px; }
+.message-input input { flex: 1; border: 1px solid #ccc; border-radius: var(--border-radius); padding: 8px; margin-right: 10px; }
+.message-input button { flex: 0 0 auto; background: var(--primary-color); color: #fff; border: none; padding: 0 20px; border-radius: var(--border-radius); cursor: pointer; transition: background var(--transition); }
+.message-input button:hover { background: var(--secondary-color); }
 
-/* Чат — ровно 30%, не меньше 300px */
-.textchat {
-  flex: 0 0 30%;
-  min-width: 300px;
-  height: 500px;
-  display: flex;
-  flex-direction: column;
-  background-color: var(--card-bg);
-  border: 1px solid #e0e0e0;
-  border-radius: var(--border-radius);
-  overflow: hidden;
-}
+.controls { text-align: right; margin-top: 20px; }
+.btn { padding: 8px 16px; border: none; border-radius: var(--border-radius); cursor: pointer; background: var(--primary-color); color: #fff; transition: background var(--transition); }
+.btn-success { background: var(--secondary-color); }
+.btn-success:hover { background: var(--primary-color); }
