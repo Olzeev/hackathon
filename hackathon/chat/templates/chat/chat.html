@@ -7,36 +7,30 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>ЭкспертЧат | Стрим</title>
 
-  <!-- стили -->
   <link rel="stylesheet" href="{% static 'chat/css/main.css' %}">
-
-  <!-- meta‑теги для JS -->
   <meta name="current-user-id" content="{{ request.user.id }}">
   <meta name="page-user-id"    content="{{ helper.id }}">
 </head>
 <body>
   <div class="main-body">
-    <!-- шапка профиля -->
+
+    <!-- шапка -->
     <div class="person-header">
       <div>
-        <img src="{{ info.photo.url }}" class="ph-avatar">
-        <p class="ph-rating">{{ info.rate }}</p>
-        <p class="ph-course">{{ info.course }}</p>
+        <img src="{{ info.photo.url }}"  class="ph-avatar">
       </div>
-      <div style="position:relative;left:20px;">
-        <h1 class="ph-name">{{ helper.username }}</h1>
-        <p class="ph-categories">
-          {% for categ in categories %}{{ categ.name }}{% if not forloop.last %},{% endif %}{% endfor %}
+      <div style="margin-left:20px">
+        <h1  class="ph-name">{{ helper.username }}</h1>
+        <p   class="ph-categories">
+          {% for c in categories %}{{ c.name }}{% if not forloop.last %}, {% endif %}{% endfor %}
         </p>
       </div>
     </div>
 
-    <!-- область видео + чат -->
+    <!-- видео + чат -->
     <div class="chat-area">
-      <!-- единый большой плеер -->
-      <video id="callVideo" class="remote-video" autoplay playsinline allow="autoplay"></video>
+      <video id="callVideo" class="remote-video" autoplay playsinline></video>
 
-      <!-- блок текстового чата -->
       <div class="textchat">
         <ul id="chat-log" class="chat-log"></ul>
         <div style="display:flex;width:100%;">
@@ -46,21 +40,15 @@
       </div>
     </div>
 
-    <!-- управление камерой (только для хоста) -->
     {% if request.user.id == helper.id %}
       <div style="text-align:right;margin-top:20px;">
-        <button id="getMedia" type="button" class="btn btn-success">Включить камеру</button>
+        <button id="getMedia" class="btn btn-success">Включить камеру</button>
       </div>
     {% endif %}
   </div>
 
-  <!-- библиотеки -->
   <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
-
-  <!-- имя пользователя для скрипта -->
   <script>var username = "{{ username }}";</script>
-
-  <!-- основной клиентский JS -->
   <script src="{% static 'chat/js/client_rtc.js' %}"></script>
 </body>
 </html>

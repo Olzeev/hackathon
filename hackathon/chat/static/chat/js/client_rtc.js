@@ -1,123 +1,145 @@
-// client_rtc.js — «1 стример → зрители», версия 22 апр  ▸ фикс большого видео и чёрного экрана
-// -------------------------------------------------------------------------
-//  Изменено:
-//    • У стримера большой <video> тоже показывает его поток (без маленького превью)
-//    • ontrack отдаёт first stream из ev.streams → устранён чёрный экран у зрителей
-//    • HTML‑разметка ожидает ТОЛЬКО один тег <video id="callVideo"> в .chat-area
-// -------------------------------------------------------------------------
+// client_rtc.js — версия 30 Apr 2025, фикс для мультизрителей и чата
+// Один стример ↔ несколько зрителей, чат + WebRTC
+// -------------------------------------------------------------
 
-// 1. Переменные -------------------------------------------------------------
+// В chat.html должны быть:
+// <meta name="current-user-id" content="{{ request.user.id }}">
+// <meta name="page-user-id"    content="{{ helper.id }}">
+// <script>var username = "{{ username }}";</script>
+
 const currentUserId = +document.querySelector('meta[name="current-user-id"]').content;
 const pageUserId    = +document.querySelector('meta[name="page-user-id"]').content;
 const isOwner       = currentUserId === pageUserId;
 
-const remoteVid = document.querySelector('#callVideo');
-const btnCamera = document.querySelector('#getMedia');
-const chatLog   = document.querySelector('#chat-log');
-const input     = document.querySelector('#messageInput');
+const btnCam  = document.getElementById('getMedia');
+const videoEl = document.getElementById('callVideo');
+const chatUl  = document.getElementById('chat-log');
+const input   = document.getElementById('messageInput');
 
-let conn, peerConnection, dataChannel;
-let localStream = null;
+let ws, pc, dc, localStream;
+const cfg   = { iceServers: [{ urls: 'stun:stun.l.google.com:19302' }] };
+const media = { video: true, audio: false };
 
-const config      = { iceServers: [{ urls: 'stun:stun.l.google.com:19302' }] };
-const constraints = { video: true, audio: false };
-
-// 2. WebSocket и инициализация ---------------------------------------------
+// ---------- WebSocket + PeerConnection setup ----------
 window.onload = () => {
-  conn = new WebSocket(`ws://${window.location.host}/chat/${pageUserId}`);
-  conn.addEventListener('open',  () => initialize(username));
-  conn.addEventListener('message', onmessage);
+  ws = new WebSocket(`ws://${location.host}/chat/${pageUserId}`);
+  ws.onopen    = onWsOpen;
+  ws.onmessage = e => handleSignal(JSON.parse(e.data));
 };
 
-function initialize(username) {
-  peerConnection = new RTCPeerConnection(config);
+function onWsOpen() {
+  initPeer();
+  if (!isOwner) {
+    // зритель запрашивает оффер
+    sendSignal('hello', null);
+  }
+}
 
-  peerConnection.onicecandidate = e => {
-    if (e.candidate) send({ peer: username, event: 'candidate', data: e.candidate });
+function sendSignal(type, data = null) {
+  if (ws.readyState === 1) ws.send(JSON.stringify({ type, from: currentUserId, data }));
+}
+
+function initPeer() {
+  pc = new RTCPeerConnection(cfg);
+
+  pc.onicecandidate = e => {
+    if (e.candidate) sendSignal('candidate', e.candidate);
   };
 
-  dataChannel = peerConnection.createDataChannel('chat');
-  dataChannel.onmessage = ev => {
-    const li = document.createElement('li');
-    li.textContent = ev.data;
-    chatLog.appendChild(li);
-  };
-  peerConnection.ondatachannel = ev => (dataChannel = ev.channel);
-
-  // ключевой фикс ▸ кладём remote stream напрямую из события
-  peerConnection.ontrack = ev => {
-    const stream = ev.streams[0];
-    if (remoteVid.srcObject !== stream) {
-      remoteVid.srcObject = stream;
-      remoteVid.play().catch(() => {});
+  pc.ontrack = e => {
+    const [stream] = e.streams;
+    if (videoEl.srcObject !== stream) {
+      videoEl.srcObject = stream;
+      videoEl.play().catch(() => {});
     }
   };
 
   if (isOwner) {
-    btnCamera.style.display = 'inline-block';
-    btnCamera.addEventListener('click', async () => {
-      await startStream();
-      await createOffer();
-      btnCamera.style.display = 'none';
-    });
+    // создаём канал только один раз для стримера
+    dc = pc.createDataChannel('chat');
+    dc.onmessage = ev => addMsg(ev.data);
   } else {
-    btnCamera.style.display = 'none'; // зрителям кнопка не нужна
+    // зритель принимает канал
+    pc.ondatachannel = ev => {
+      dc = ev.channel;
+      dc.onmessage = ev2 => addMsg(ev2.data);
+    };
+  }
+
+  if (isOwner) {
+    btnCam.style.display = 'inline-block';
+    btnCam.onclick = startStream;
   }
 }
 
-// 3. Работа с потоками ------------------------------------------------------
+// ---------- Стример: start streaming ----------
 async function startStream() {
-  localStream = await navigator.mediaDevices.getUserMedia(constraints);
-  // показываем собственное видео сразу в большом плеере
-  remoteVid.srcObject = localStream;
-  remoteVid.muted = true;
-  remoteVid.play().catch(() => {});
-  // треки в RTCPeerConnection
-  localStream.getTracks().forEach(t => peerConnection.addTrack(t, localStream));
+  localStream = await navigator.mediaDevices.getUserMedia(media);
+
+  // показываем свой поток в большом окне
+  videoEl.srcObject = localStream;
+  videoEl.muted     = true;
+  await videoEl.play().catch(() => {});
+
+  // из localStream добавляем треки в PeerConnection
+  localStream.getTracks().forEach(track => pc.addTrack(track, localStream));
+
+  // шлём оффер
+  await negotiate();
+  btnCam.disabled = true;
 }
 
-async function createOffer() {
-  const offer = await peerConnection.createOffer();
-  await peerConnection.setLocalDescription(offer);
-  send({ peer: username, event: 'offer', data: offer });
+async function negotiate() {
+  const offer = await pc.createOffer();
+  await pc.setLocalDescription(offer);
+  sendSignal('offer', offer);
 }
 
-function handleOffer(offer) {
-  peerConnection.setRemoteDescription(offer)
-    .then(() => peerConnection.createAnswer())
-    .then(ans => {
-      peerConnection.setLocalDescription(ans);
-      send({ peer: username, event: 'answer', data: ans });
-    });
+// ---------- Обработка сигналов ----------
+async function handleSignal(msg) {
+  const { type, data, from } = msg;
+  switch (type) {
+    case 'hello':
+      // новый зритель запросил оффер
+      if (isOwner && localStream) await negotiate();
+      break;
+
+    case 'offer':
+      // зритель получает оффер от стримера
+      if (!isOwner) {
+        await pc.setRemoteDescription(data);
+        const answer = await pc.createAnswer();
+        await pc.setLocalDescription(answer);
+        sendSignal('answer', answer);
+      }
+      break;
+
+    case 'answer':
+      // стример получает ответ
+      if (isOwner) {
+        await pc.setRemoteDescription(data);
+      }
+      break;
+
+    case 'candidate':
+      if (data) await pc.addIceCandidate(new RTCIceCandidate(data));
+      break;
+  }
 }
 
-function handleAnswer(answer) {
-  peerConnection.setRemoteDescription(answer);
-}
-
-function handleCandidate(candidate) {
-  peerConnection.addIceCandidate(new RTCIceCandidate(candidate));
-}
-
-// 4. WebSocket --------------------------------------------------------------
-function onmessage(msg) {
-  const { peer, event, data } = JSON.parse(msg.data);
-  if (peer === username) return; // свои не обрабатываем
-  if (event === 'offer')     return handleOffer(data);
-  if (event === 'answer')    return handleAnswer(data);
-  if (event === 'candidate') return handleCandidate(data);
-}
-
-function send(obj) { conn.send(JSON.stringify(obj)); }
-
-// 5. Чат --------------------------------------------------------------------
+// ---------- Чат ----------
 function sendMessage() {
   const text = input.value.trim();
-  if (!text) return;
-  const full = `${username}: ${text}`;
-  dataChannel.send(full);
-  const li = document.createElement('li');
-  li.textContent = full;
-  chatLog.appendChild(li);
+  if (!text || !dc) return;
+  const msg = `${username || 'Гость'}: ${text}`;
+  addMsg(msg);
+  dc.send(msg);
   input.value = '';
+}
+
+function addMsg(msg) {
+  const li = document.createElement('li');
+  li.textContent = msg;
+  chatUl.appendChild(li);
+  chatUl.scrollTop = chatUl.scrollHeight;
 }
