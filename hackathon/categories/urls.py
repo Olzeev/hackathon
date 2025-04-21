@@ -13,6 +13,7 @@ urlpatterns = [
     path('become_helper', views.become_helper, name='become_helper'),
     path('chat/<int:helper_id>/', views.redirect_to_chat, name='redirect_to_chat'),
     path('stop_stream', views.stop_stream, name = 'stop_stream'),
+    path('start_stream', views.start_stream, name = 'start_stream'),
     ]
 if settings.DEBUG:
     urlpatterns += static(settings.MEDIA_URL, document_root=settings.MEDIA_ROOT)

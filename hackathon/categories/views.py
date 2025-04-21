@@ -27,7 +27,7 @@ def categories(request):
     if request.user.is_authenticated:
         user_data = AdditionalInfo.objects.get_or_create(user_id = request.user.id)
     return render(request, 'categories/categories.html', {
-        'helpers': User.objects.all(),
+        'helpers': helpers,
         'all_categories': all_categories,
         'selected_cats': list(map(int, selected_cats)) if selected_cats else [],
         'user_data' : user_data[0]
@@ -153,7 +153,13 @@ def change_profile(request):
 
 
 def start_stream(request):
+    user_data = AdditionalInfo.objects.get(user_id = request.user.id)
+    user_data.is_online = True
+    user_data.save()
     return redirect('categories')
 
 def stop_stream(request):
+    user_data = AdditionalInfo.objects.get(user_id = request.user.id)
+    user_data.is_online = False
+    user_data.save()
     return redirect('categories')
