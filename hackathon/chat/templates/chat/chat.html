@@ -1,82 +1,66 @@
-
 {% load static %}
-
 {% csrf_token %}
 <!DOCTYPE html>
-<html lang="en">
+<html lang="ru">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <link rel="stylesheet" type="text/css" href="{% static 'chat/css/main.css' %}">
-    <title>Document</title>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>ЭкспертЧат | Стрим</title>
 
-    <meta name="current-user-id" content="{{ request.user.id }}">
-    <meta name="page-user-id"    content="{{ helper.id }}">
+  <!-- стили -->
+  <link rel="stylesheet" href="{% static 'chat/css/main.css' %}">
 
+  <!-- meta‑теги для JS -->
+  <meta name="current-user-id" content="{{ request.user.id }}">
+  <meta name="page-user-id"    content="{{ helper.id }}">
 </head>
 <body>
-    <div class="main-body">
-        <div class="person-header">
-            <div>
-                <img src="{{ info.photo.url }}" class="ph-avatar">
-                <p class="ph-rating" id="rating">{{ info.rate }}</p>
-                <p class="ph-course" id="course">{{ info.course }}</p>
-            </div>
-            <div style="position: relative; left: 20px;">
-                <h1 class="ph-name">{{ helper.username }}</h1>
-                <p class="ph-categories">{% for categ in categories %} {{ categ.name }}  {% endfor %}</p>
-            </div>
+  <div class="main-body">
+    <!-- шапка профиля -->
+    <div class="person-header">
+      <div>
+        <img src="{{ info.photo.url }}" class="ph-avatar">
+        <p class="ph-rating">{{ info.rate }}</p>
+        <p class="ph-course">{{ info.course }}</p>
+      </div>
+      <div style="position:relative;left:20px;">
+        <h1 class="ph-name">{{ helper.username }}</h1>
+        <p class="ph-categories">
+          {% for categ in categories %}{{ categ.name }}{% if not forloop.last %},{% endif %}{% endfor %}
+        </p>
+      </div>
+    </div>
+
+    <!-- область видео + чат -->
+    <div class="chat-area">
+      <!-- единый большой плеер -->
+      <video id="callVideo" class="remote-video" autoplay playsinline allow="autoplay"></video>
+
+      <!-- блок текстового чата -->
+      <div class="textchat">
+        <ul id="chat-log" class="chat-log"></ul>
+        <div style="display:flex;width:100%;">
+          <input id="messageInput" type="text" class="message-input" placeholder="Сообщение…">
+          <button type="button" class="btn btn-primary" onclick="sendMessage()">Отправить</button>
         </div>
-        <!--<button onclick="" id="join-btn">Join</button>-->
-        <div class="chat-area">
-            <video class="remote-video" autoplay="true" id="callVideo" src="{% static 'chat/video/filler.mp4' %}" allow="autoplay"></video>
-            <!--<video class="local-video" id="local-video" autoplay ></video>-->
-            <div class="textchat">
+      </div>
+    </div>
 
-                
-                <ul id="chat-log" class="chat-log">
+    <!-- управление камерой (только для хоста) -->
+    {% if request.user.id == helper.id %}
+      <div style="text-align:right;margin-top:20px;">
+        <button id="getMedia" type="button" class="btn btn-success">Включить камеру</button>
+      </div>
+    {% endif %}
+  </div>
 
-                </ul>
-                <div style="display: flex; width: 100%; position: relative;">
-                  <input id="messageInput" type="text" class="message-input" placeholder="Сообщение...">
-                  <button type="button" class="btn btn-primary" onclick='sendMessage()'>SEND</button>
-                </div>
-              </div>
-        </div>
-        <div class="container">
-          
-            <!--WebRTC related code-->
+  <!-- библиотеки -->
+  <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
 
-            {% if request.user.id == helper.id %}
-              <button id="btnCreateChat" type="button" class="btn btn-primary" onclick='createOffer()'>
-                Начать трансляцию
-              </button>
-            {% endif %}
-          
-            <div class="raw">
-              <div class="col-lg-6">
-                <p>You: </p>
-                <video autoplay="true" width="200" id="myVideo"></video>
-              </div>
-              <div class="col-lg-6">
-                <div id="acceptDiv">
-                  <p>Caller: </p>
-                  
-                </div>
-              </div>
-              <div class="col-lg-12">
-                <button type="button" class="btn btn-success" id="getMedia">Turn on camera</button>
-              </div>
-            </div>
-          
-          </div>
-          
+  <!-- имя пользователя для скрипта -->
+  <script>var username = "{{ username }}";</script>
 
-<script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
-
-<script type="text/javascript">
-  var username = "{{ username }}";
-</script>
-<script src="{% static 'chat/js/client_rtc.js' %}"> </script>
+  <!-- основной клиентский JS -->
+  <script src="{% static 'chat/js/client_rtc.js' %}"></script>
 </body>
 </html>

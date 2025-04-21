@@ -233,7 +233,7 @@
               <p>{{ helper.description }}</p>
               <p>Рейтинг: 5.00</p>
                 {% if user.is_authenticated %}
-                  <a href="{% url 'redirect_to_chat' helper.id %}" class="btn-start-chat">Начать чат</a>
+                <a href="{% url 'chat:chat-view' helper.user_id %}" class="btn-start-chat">Начать чат</a>
                 {% else %}
                   <a href="{% url 'login' %}" class="btn-start-chat">Начать чат</a>
                 {% endif %}
