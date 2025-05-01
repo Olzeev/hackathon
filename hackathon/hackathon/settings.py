@@ -27,7 +27,7 @@ DEBUG = True
 
 ALLOWED_HOSTS =  ['193.124.115.215', '127.0.0.1', 'expertchat.space']
 
-CSRF_TRUSTED_ORIGINS = ['https://expertchat.html']
+CSRF_TRUSTED_ORIGINS = ['https://expertchat.space']
 
 # Application definition
 

@@ -16,7 +16,7 @@ const btnSend   = document.querySelector('.message-input button');
 const btnCamera = document.getElementById('getMedia');
 
 // WebSocket для сигналинга + чата
-const ws = new WebSocket(`ws://${location.host}/chat/${pageId}`);
+const ws = new WebSocket(`wss://${location.host}/chat/${pageId}`);
 ws.addEventListener('open', () => {
   if (!isOwner) {
     // зритель говорит «привет» стримеру, чтобы тот установил WebRTC
