@@ -27,7 +27,7 @@
     <!-- Контейнер видео и чата -->
     <div class="chat-area">
       <!-- Видео-поток -->
-      <video id="callVideo" class="remote-video" autoplay playsinline></video>
+      <video id="callVideo" class="remote-video"></video>
 
       <!-- Текстовый чат -->
       <div class="textchat">
@@ -44,6 +44,8 @@
       <div class="controls">
         <button id="getMedia" class="btn btn-success">Включить камеру</button>
       </div>
+    {% else %}
+      <button id="play_remote_video">Подключиться</button>
     {% endif %}
   </div>
 

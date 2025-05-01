@@ -181,3 +181,8 @@ function broadcastDC(message) {
     }
   });
 }
+
+
+document.getElementById('play_remote_video').addEventListener('click', function() {
+  document.getElementById('callVideo').play()
+})

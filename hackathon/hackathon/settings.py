@@ -25,8 +25,9 @@ SECRET_KEY = 'django-insecure-v=u2q7%1_!_l)nv0%r%2s&sdq56$hm8#q_)zsn$^lbq$b(u3)n
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = True
 
-ALLOWED_HOSTS =  ['193.124.115.215', '127.0.0.1']
+ALLOWED_HOSTS =  ['193.124.115.215', '127.0.0.1', 'expertchat.space']
 
+CSRF_TRUSTED_ORIGINS = ['https://expertchat.html']
 
 # Application definition
 
