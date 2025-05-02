@@ -47,7 +47,7 @@ const iceConfig = { iceServers:[{ urls:'stun:stun.l.google.com:19302' },
   }
 ] };
  */
-const iceConfig = {iceServers:{
+const iceConfig = {iceServers:[{
   "username": "6j17pWChPpZ0fP7rDSc86kHmAqM_zfh6VbqRlXDc8IXuA7I7yfyMqYxo_DornWxFAAAAAGgUketvbHplZXY=", 
   "urls": [
     "stun:fr-turn3.xirsys.com",
@@ -58,7 +58,7 @@ const iceConfig = {iceServers:{
     "turns:fr-turn3.xirsys.com:443?transport=tcp",
     "turns:fr-turn3.xirsys.com:5349?transport=tcp"],
   "credential": "ceda6496-2738-11f0-b1b0-0242ac120004"
-}
+}]
 }
 
 let localStream = null;
