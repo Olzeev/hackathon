@@ -68,7 +68,12 @@ const dcs = {};  // DataChannel по viewerId
 // Стример может включить камеру
 async function startCamera() {
   try {
-    localStream = await navigator.mediaDevices.getUserMedia({ video:true, audio:false });
+    localStream = await navigator.mediaDevices.getUserMedia({ video: {
+      width: { ideal: 800, max: 1280 },  // Желательно 1280, но не больше 1920
+      height: { ideal: 600, max: 1080 },  // Желательно 720p, но не больше 1080p
+      frameRate: { ideal: 12, max: 30 },  // 24-30 FPS
+      aspectRatio: 16/9                    // Соотношение сторон
+    }, audio:false });
     videoEl.srcObject = localStream;
     videoEl.muted = true;
     await videoEl.play().catch(()=>{});
